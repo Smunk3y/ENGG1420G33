@@ -20,4 +20,11 @@ public class User {
     public String getUsername() { return username; }
     public String getEmail() { return email; }
     public String getRole() { return role; }
+
+    public void setUsername(String Username){
+        this.username = Username;
+    }
+    public void setPassword(String password){
+        this.password = password;
+    }
 }
