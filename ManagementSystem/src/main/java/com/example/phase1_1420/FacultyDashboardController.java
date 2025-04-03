@@ -72,7 +72,7 @@ public class FacultyDashboardController {
     private void handleSubjects() { loadContent("subject-management-view.fxml"); }
 
     @FXML
-    private void handleEvents() { loadContent("user-events-view.fxml"); }
+    private void handleEvents() { loadContent("event-management-view.fxml"); }
 
     @FXML
     private void handleProfile() {

@@ -223,7 +223,7 @@ public class UserDashboardViewController implements Initializable {
     private void loadEventsTable() {
         // Filter events based on student's registration
         ObservableList<Event> registeredEvents = FXCollections.observableArrayList();
-        String studentId = currentStudent.getId();
+        String studentId = currentStudent.getUsername();
         
         for (Event event : excelReader.eventList) {
             if (event.getRegisteredStudents().contains(studentId)) {

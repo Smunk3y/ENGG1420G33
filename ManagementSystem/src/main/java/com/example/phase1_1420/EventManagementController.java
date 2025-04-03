@@ -301,7 +301,7 @@ public class EventManagementController implements Initializable {
             selectedEventCostText.setText(event.getCost());
             
             // Update registration status
-            String currentUserId = UserDatabase.CurrentUser.getId();
+            String currentUserId = UserDatabase.CurrentUser.getUsername();
             String registeredStudents = event.getRegisteredStudents();
             boolean isRegistered = registeredStudents != null && registeredStudents.contains(currentUserId);
             
@@ -374,8 +374,8 @@ public class EventManagementController implements Initializable {
         if (selectedEvent != null) {
             String currentStudents = selectedEvent.getRegisteredStudents();
             String newStudents = currentStudents.isEmpty() ? 
-                UserDatabase.CurrentUser.getId() : 
-                currentStudents + "," + UserDatabase.CurrentUser.getId();
+                UserDatabase.CurrentUser.getUsername() :
+                currentStudents + "," + UserDatabase.CurrentUser.getUsername();
             
             selectedEvent.setRegisteredStudents(newStudents);
             
@@ -401,7 +401,7 @@ public class EventManagementController implements Initializable {
             StringBuilder newStudents = new StringBuilder();
             
             for (String student : students) {
-                if (!student.equals(UserDatabase.CurrentUser.getId())) {
+                if (!student.equals(UserDatabase.CurrentUser.getUsername())) {
                     if (newStudents.length() > 0) {
                         newStudents.append(",");
                     }
