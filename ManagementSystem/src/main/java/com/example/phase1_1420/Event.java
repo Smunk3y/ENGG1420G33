@@ -51,15 +51,23 @@ public class Event {
             return "";
         }
         try {
-            // Try different date formats
+            // Try different date formats - add more formats to handle "09/01/0025" style dates
             SimpleDateFormat[] formats = {
                 new SimpleDateFormat("yyyy-MM-dd"),
                 new SimpleDateFormat("MM/dd/yyyy"),
+                new SimpleDateFormat("MM/dd/00yy"), // Special format for 2-digit years with leading zeros
                 new SimpleDateFormat("dd/MM/yyyy")
             };
             
+            // First try the exact input without parsing to preserve existing data
+            if (inputDate.matches("\\d{2}/\\d{2}/\\d{4}")) {
+                return inputDate; // Return as-is if it's already in MM/dd/yyyy format
+            }
+            
+            // Otherwise try parsing with different formats
             for (SimpleDateFormat format : formats) {
                 try {
+                    format.setLenient(true); // Be more forgiving with date parsing
                     Date date = format.parse(inputDate);
                     return format.format(date);
                 } catch (ParseException e) {
@@ -71,7 +79,7 @@ public class Event {
             // If none of the formats work, return the original date
             return inputDate;
         } catch (Exception e) {
-            System.err.println("Error formatting date: " + e.getMessage());
+            System.out.println("Keeping original date format: " + inputDate);
             return inputDate;
         }
     }

@@ -20,6 +20,8 @@ public class MainApp extends Application {
     }
 
     public static void main(String[] args) {
+        // Silence Log4j warning messages
+        System.setProperty("org.apache.logging.log4j.simplelog.StatusLogger.level", "OFF");
         launch(args);
     }
 }

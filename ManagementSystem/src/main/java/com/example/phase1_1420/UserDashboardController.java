@@ -36,6 +36,11 @@ public class UserDashboardController implements Initializable {
     @FXML private TableColumn<Event, String> eventNameColumn;
     @FXML private TableColumn<Event, String> eventDateColumn;
     @FXML private TableColumn<Event, String> eventLocationColumn;
+    @FXML private TableView<Course> coursesTable;
+    @FXML private TableColumn<Course, String> courseCodeColumn;
+    @FXML private TableColumn<Course, String> courseNameColumn;
+    @FXML private TableColumn<Course, String> instructorColumn;
+    @FXML private TableColumn<Course, String> scheduleColumn;
     @FXML private Text UserName;
     @FXML private Text UserID;
 
@@ -46,21 +51,84 @@ public class UserDashboardController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            // Load data from Excel
+            System.out.println("=== Initializing UserDashboardController ===");
+            System.out.println("Resource URL: " + location);
+            
+            // Load data from Excel - fresh load each time to get latest changes
+            System.out.println("Loading data from Excel...");
             excelReader.ReadingNameExcelFile();
             
-            // Initialize sidebar
-            sidebarPane.setTranslateX(-200);
-            toggleButton.setText("☰");
-            
-            // Load initial content
-            loadContent("user-dashboard-view.fxml");
-            
-            // Set up user info
+            // Debug: Print current user info
             if (UserDatabase.CurrentUser != null) {
-                UserName.setText(UserDatabase.CurrentUser.getUsername());
-                UserID.setText(UserDatabase.CurrentUser.getId());
+                System.out.println("Current User Info:");
+                System.out.println("- Username: " + UserDatabase.CurrentUser.getUsername());
+                System.out.println("- ID: " + UserDatabase.CurrentUser.getId());
+                System.out.println("- Type: " + UserDatabase.CurrentUser.getClass().getSimpleName());
+            } else {
+                System.out.println("WARNING: CurrentUser is null!");
             }
+            
+            // Debug: Print loaded events and registrations
+            System.out.println("\nLoaded Events:");
+            for (Event event : excelReader.eventList) {
+                System.out.println("- Event: " + event.getEventName());
+                System.out.println("  Registered Students: " + event.getRegisteredStudents());
+            }
+            
+            // Check which FXML file is loaded
+            boolean isMainDashboard = location.toString().contains("user-dashboard.fxml");
+            boolean isContentView = location.toString().contains("user-dashboard-view.fxml");
+            
+            System.out.println("FXML file loaded: " + (isMainDashboard ? "Main Dashboard" : isContentView ? "Content View" : "Unknown"));
+            
+            // Initialize UI components specific to user-dashboard.fxml
+            if (isMainDashboard) {
+                // Initialize sidebar if it exists
+                if (sidebarPane != null) {
+                    sidebarPane.setTranslateX(-200);
+                    toggleButton.setText("☰");
+                } else {
+                    System.out.println("WARNING: sidebarPane is null, skipping initialization");
+                }
+                
+                // Set up user info in sidebar
+                if (UserDatabase.CurrentUser != null) {
+                    if (UserName != null) {
+                        UserName.setText(UserDatabase.CurrentUser.getUsername());
+                    }
+                    if (UserID != null) {
+                        UserID.setText(UserDatabase.CurrentUser.getId());
+                    }
+                }
+                
+                // Load the default content
+                loadContent("user-dashboard-view.fxml");
+            }
+            
+            // Initialize UI components specific to user-dashboard-view.fxml
+            if (isContentView) {
+                // Update the student info fields if they exist
+                if (UserDatabase.CurrentUser != null) {
+                    updateUserInfo();
+                }
+                
+                // Set up events table if it exists
+                if (eventsTable != null) {
+                    System.out.println("\nSetting up events table...");
+                    setupRegisteredEventsTable();
+                    
+                    // Load registered events - using data from fresh Excel read
+                    System.out.println("\nLoading registered events...");
+                    loadRegisteredEvents();
+                } else {
+                    System.out.println("WARNING: eventsTable is null!");
+                }
+                
+                // Note: We'll handle coursesTable in the FXML loaded view.
+                // The variable is initialized in the loadContent method
+                System.out.println("Courses table will be handled when loading the dashboard view content.");
+            }
+            
         } catch (Exception e) {
             System.err.println("Error in initialize: " + e.getMessage());
             e.printStackTrace();
@@ -237,10 +305,16 @@ public class UserDashboardController implements Initializable {
                 }
                 
                 // Find courses table if it exists
-                TableView<Course> coursesTable = (TableView<Course>) content.lookup("#coursesTable");
+                coursesTable = (TableView<Course>) content.lookup("#coursesTable");
                 if (coursesTable != null) {
                     System.out.println("Found courses table, setting up courses...");
-                    loadEnrolledCourses(coursesTable);
+                    courseCodeColumn = (TableColumn<Course, String>) coursesTable.getColumns().get(0);
+                    courseNameColumn = (TableColumn<Course, String>) coursesTable.getColumns().get(1);
+                    instructorColumn = (TableColumn<Course, String>) coursesTable.getColumns().get(2);
+                    scheduleColumn = (TableColumn<Course, String>) coursesTable.getColumns().get(3);
+                    
+                    setupCoursesTable();
+                    loadEnrolledCourses();
                 } else {
                     System.err.println("ERROR: Could not find coursesTable in the loaded FXML");
                 }
@@ -255,9 +329,39 @@ public class UserDashboardController implements Initializable {
             e.printStackTrace();
         }
     }
-    
-    private void loadEnrolledCourses(TableView<Course> coursesTable) {
+
+    private void setupCoursesTable() {
         try {
+            if (coursesTable == null) {
+                System.err.println("ERROR: coursesTable is null, cannot setup courses table");
+                return;
+            }
+            
+            System.out.println("Setting up courses table columns");
+            
+            courseCodeColumn.setCellValueFactory(cellData -> 
+                new SimpleStringProperty(cellData.getValue().getCourseCode()));
+            courseNameColumn.setCellValueFactory(cellData -> 
+                new SimpleStringProperty(cellData.getValue().getCourseName()));
+            instructorColumn.setCellValueFactory(cellData -> 
+                new SimpleStringProperty(cellData.getValue().getInstructor()));
+            scheduleColumn.setCellValueFactory(cellData -> 
+                new SimpleStringProperty(cellData.getValue().getSchedule()));
+            
+            System.out.println("Courses table columns set up successfully");
+        } catch (Exception e) {
+            System.err.println("Error in setupCoursesTable: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void loadEnrolledCourses() {
+        try {
+            if (coursesTable == null) {
+                System.err.println("ERROR: coursesTable is null, cannot load enrolled courses");
+                return;
+            }
+            
             if (UserDatabase.CurrentUser == null) {
                 System.err.println("ERROR: CurrentUser is null, cannot load enrolled courses");
                 return;
@@ -331,19 +435,6 @@ public class UserDashboardController implements Initializable {
                     enrolledCourses.add(basicCourse);
                     processedSubjects.add(studentSubject);
                 }
-            }
-            
-            // Set up the table columns if not already set
-            if (coursesTable.getColumns().size() >= 4) {
-                TableColumn<Course, String> codeCol = (TableColumn<Course, String>) coursesTable.getColumns().get(0);
-                TableColumn<Course, String> nameCol = (TableColumn<Course, String>) coursesTable.getColumns().get(1);
-                TableColumn<Course, String> instrCol = (TableColumn<Course, String>) coursesTable.getColumns().get(2);
-                TableColumn<Course, String> schedCol = (TableColumn<Course, String>) coursesTable.getColumns().get(3);
-                
-                codeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCourseCode()));
-                nameCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCourseName()));
-                instrCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getInstructor()));
-                schedCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getSchedule()));
             }
             
             // Set the courses in the table
