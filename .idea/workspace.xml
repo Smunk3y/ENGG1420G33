@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="695edb3f-5990-4e7d-9437-02fba9d60a2e" name="Changes" comment="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
+      <change afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyProfileController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ManagementSystem/src/main/resources/com/example/phase1_1420/faculty-profile-view.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/AdminDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/AdminDashboardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyDashboardController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +21,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="FxmlFile" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -144,7 +146,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1743658060586</updated>
-      <workItem from="1743664648976" duration="6415000" />
+      <workItem from="1743664648976" duration="6970000" />
     </task>
     <task id="LOCAL-00004" summary="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
       <option name="closed" value="true" />
@@ -162,7 +164,23 @@
       <option name="project" value="LOCAL" />
       <updated>1743680864618</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
+      <option name="closed" value="true" />
+      <created>1743681057872</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1743681057872</updated>
+    </task>
+    <task id="LOCAL-00007" summary="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
+      <option name="closed" value="true" />
+      <created>1743681279285</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1743681279285</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
