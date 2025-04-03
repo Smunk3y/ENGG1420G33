@@ -196,7 +196,7 @@ public class ExcelFile {
             idCell.setCellValue(faculty.getId());
             userCell.setCellValue(faculty.getUsername());
             degreeCell.setCellValue(faculty.getDegree());
-            researchCell.setCellValue(faculty.getResearchInterest());
+            researchCell.setCellValue(faculty.getResearchArea());
             emailCell.setCellValue(faculty.getEmail());
             officeCell.setCellValue(faculty.getOfficeLocation());
             coursesCell.setCellValue(faculty.getCoursesOffered());
@@ -334,8 +334,18 @@ public class ExcelFile {
             Cell passCell = row.getCell(7, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
             if (idCell != null) {
-                Faculty faculty = new Faculty(idCell.toString(),passCell.toString(),userCell.toString(),emailCell.toString(), degreeCell.toString()
-                , researchCell.toString(), officeCell.toString(), coursesCell.toString());
+                // 👇 This line needs to pass 9 arguments
+                Faculty faculty = new Faculty(
+                        idCell != null ? idCell.toString() : "",
+                        passCell != null ? passCell.toString() : "",
+                        userCell != null ? userCell.toString() : "",
+                        emailCell != null ? emailCell.toString() : "",
+                        degreeCell != null ? degreeCell.toString() : "",
+                        researchCell != null ? researchCell.toString() : "",
+                        officeCell != null ? officeCell.toString() : "",
+                        coursesCell != null ? coursesCell.toString() : "",
+                        "" // 🔹 Missing department — using empty string here
+                );
                 facultyList.add(faculty);
             }
         }
