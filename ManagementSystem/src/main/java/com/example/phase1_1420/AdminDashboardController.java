@@ -75,7 +75,9 @@ public class AdminDashboardController {
 
 
     @FXML
-    private void handleFaculty() { loadContent("admin-faculty-view.fxml"); }
+    private void handleFaculty() {
+        loadContent("faculty-management-view.fxml");
+    }
 
 
     @FXML
