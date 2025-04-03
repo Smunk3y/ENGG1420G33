@@ -8,6 +8,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FacultyManagementController {
 
@@ -29,11 +32,8 @@ public class FacultyManagementController {
     @FXML private Button deleteButton;
     @FXML private Button clearSelectionButton;
 
-
     private final ObservableList<Faculty> facultyList = FXCollections.observableArrayList();
-
     private final ExcelFile excelFile = new ExcelFile();
-
 
     @FXML
     public void initialize() {
@@ -43,27 +43,41 @@ public class FacultyManagementController {
         degreeColumn.setCellValueFactory(new PropertyValueFactory<>("degree"));
         researchAreaColumn.setCellValueFactory(new PropertyValueFactory<>("researchArea"));
 
-
         facultyTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
                 nameField.setText(newSelection.getUsername());
                 emailField.setText(newSelection.getEmail());
                 degreeField.setText(newSelection.getDegree());
                 researchAreaField.setText(newSelection.getResearchArea());
                 passwordField.setText(newSelection.getPassword());
+            }
         });
 
         try {
-            excelFile.ReadingNameExcelFile(); // loads from file
-            facultyList.addAll(excelFile.facultyList); // populate observable list
+            excelFile.ReadingNameExcelFile();
+            if (UserDatabase.CurrentUser.getRole().equals("USER") && UserDatabase.CurrentUser instanceof Student) {
+                Student currentStudent = (Student) UserDatabase.CurrentUser;
+                Set<String> teacherUsernames = new HashSet<>();
+                String[] enrolledCodes = currentStudent.getSubjects().split(",");
+                for (Course course : excelFile.courseList) {
+                    if (Arrays.asList(enrolledCodes).contains(course.getCode())) {
+                        teacherUsernames.add(course.getTeacherName());
+                    }
+                }
+                for (Faculty f : excelFile.facultyList) {
+                    if (teacherUsernames.contains(f.getUsername())) {
+                        facultyList.add(f);
+                    }
+                }
+            } else {
+                facultyList.addAll(excelFile.facultyList);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Load Error", "Failed to load faculty data.");
         }
 
-        System.out.println("First Faculty Degree: " + facultyList.get(0).getDegree());
-        boolean isAdmin = UserDatabase.CurrentUser.getRole().equals("ADMIN");
-        setAdminMode(isAdmin);
-
+        setAdminMode(UserDatabase.CurrentUser.getRole().equals("ADMIN"));
         facultyTable.setItems(facultyList);
     }
 
@@ -77,7 +91,7 @@ public class FacultyManagementController {
     private String generateNextFacultyID() {
         int max = 0;
         for (Faculty f : facultyList) {
-            String id = f.getId().replaceAll("[^\\d]", ""); // extract digits
+            String id = f.getId().replaceAll("[^\\d]", "");
             if (!id.isEmpty()) {
                 int num = Integer.parseInt(id);
                 if (num > max) {
@@ -85,14 +99,13 @@ public class FacultyManagementController {
                 }
             }
         }
-        return String.format("F%04d", max + 1); // Format as F0001, F0002, etc.
+        return String.format("F%04d", max + 1);
     }
 
     @FXML
     private void handleAdd() {
         String id = generateNextFacultyID();
 
-        // Check for duplicate
         for (Faculty f : facultyList) {
             if (f.getId().equals(id)) {
                 showAlert(Alert.AlertType.ERROR, "Duplicate ID", "A faculty member with this ID already exists.");
@@ -114,9 +127,8 @@ public class FacultyManagementController {
                 emailField.getText().trim(),
                 degreeField.getText().trim(),
                 researchAreaField.getText().trim(),
-                "RM ###",    // default office location
-                ""    // default courses offered
-
+                "RM ###",
+                ""
         );
 
         facultyList.add(newFaculty);
@@ -127,7 +139,7 @@ public class FacultyManagementController {
 
     public void saveFacultyToExcel() {
         try {
-            excelFile.writeFacultyToExcel(facultyList); // subjects is the ObservableList<Subject>
+            excelFile.writeFacultyToExcel(facultyList);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -154,7 +166,7 @@ public class FacultyManagementController {
     }
 
     @FXML
-    private void clearSelections(){
+    private void clearSelections() {
         clearFields();
     }
 
