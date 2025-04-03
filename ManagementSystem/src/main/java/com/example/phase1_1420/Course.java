@@ -25,6 +25,7 @@ public class Course extends Subject {
         this.teacherName = teacherName;
     }
 
+    //Setters and getters
     public String getCourseCode(){
        return this.courseCode;
     }
