@@ -17,7 +17,7 @@ public class ExcelFile {
     public List<Course> courseList = new ArrayList<>();
 
     // Common file path for all Excel operations
-    private static final String EXCEL_FILE_PATH = "UMS_Data.xlsx";
+    private static final String EXCEL_FILE_PATH = "ManagementSystem/src/main/resources/UMS_Data.xlsx";
 
     //Write the subject's back to the excel file after edit in GUI
     public void writeSubjectsToExcel(List<Subject> updatedSubjects) throws IOException {
@@ -298,7 +298,7 @@ public class ExcelFile {
                 Student student = new Student(idCell.toString(), passCell.toString(), userCell.toString(), emailCell.toString(), adressCell.toString(),
                         telephoneCell.toString(), academicLevelCell.toString(),semesterCell.toString(), subjectsCell.toString(), thesisTitleCell.toString(), Double.parseDouble(progressCell.toString()), thesisTitleCell.toString());
                 studentList.add(student);
-                
+
                 System.out.println("- Processed Subjects: '" + student.getSubjects() + "'");
             }
         }
