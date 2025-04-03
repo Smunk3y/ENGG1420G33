@@ -88,17 +88,63 @@ public class UserDashboardController implements Initializable {
     }
 
     private void loadRegisteredEvents() {
-        registeredEvents.clear();
-        String currentUserId = UserDatabase.CurrentUser.getId();
+        System.out.println("\n=== Loading Registered Events ===");
         
-        for (Event event : excelReader.eventList) {
-            String registeredStudents = event.getRegisteredStudents();
-            if (registeredStudents != null && registeredStudents.contains(currentUserId)) {
-                registeredEvents.add(event);
+        try {
+            if (eventsTable == null) {
+                System.err.println("ERROR: eventsTable is null, cannot load registered events");
+                return;
             }
+            
+            if (UserDatabase.CurrentUser == null) {
+                System.err.println("ERROR: CurrentUser is null, cannot load registered events");
+                return;
+            }
+            
+            System.out.println("Current Student: " + UserDatabase.CurrentUser.getUsername());
+            
+            registeredEvents.clear();
+            String currentUsername = UserDatabase.CurrentUser.getUsername();
+            
+            System.out.println("Total events to check: " + excelReader.eventList.size());
+            
+            for (Event event : excelReader.eventList) {
+                System.out.println("\nChecking event: " + event.getEventName());
+                
+                // Check if this registration was explicitly removed during this session
+                if (UserDatabase.wasRegistrationRemoved(event.getEventID(), currentUsername)) {
+                    System.out.println("× Registration was explicitly removed for this event during this session");
+                    continue; // Skip this event
+                }
+                
+                String registeredStudents = event.getRegisteredStudents();
+                System.out.println("Registered students string: '" + registeredStudents + "'");
+                
+                if (registeredStudents != null && !registeredStudents.isEmpty()) {
+                    String[] students = registeredStudents.split(",");
+                    System.out.println("Split students:");
+                    for (String student : students) {
+                        String trimmedStudent = student.trim();
+                        System.out.println("- Checking against: '" + trimmedStudent + "'");
+                        if (trimmedStudent.equals(currentUsername)) {
+                            System.out.println("✓ Match found! Adding event: " + event.getEventName());
+                            registeredEvents.add(event);
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            System.out.println("\nTotal registered events found: " + registeredEvents.size());
+            System.out.println("Setting table items...");
+            
+            eventsTable.setItems(registeredEvents);
+            
+            System.out.println("Table items set successfully");
+        } catch (Exception e) {
+            System.err.println("Error in loadRegisteredEvents: " + e.getMessage());
+            e.printStackTrace();
         }
-        
-        eventsTable.setItems(registeredEvents);
     }
 
     private String extractDate(String dateTime) {
@@ -140,13 +186,10 @@ public class UserDashboardController implements Initializable {
     }
 
     @FXML
-    private void handleProfile() { loadContent("studentProfile.fxml"); }
-
+    private void handleProfile() { loadContent("user-profile-view.fxml"); }
+    
     @FXML
-    private void handleFaculty() {
-        loadContent("faculty-management-view.fxml");
-    }
-
+    private void handleFaculty() { loadContent("faculty-view.fxml");}
 
     @FXML
     private void handleLogout() {
@@ -166,8 +209,148 @@ public class UserDashboardController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/phase1_1420/" + fxmlFile));
             contentArea.getChildren().clear();
-            contentArea.getChildren().add(loader.load());
+            Parent content = loader.load();
+            contentArea.getChildren().add(content);
+            
+            // If loading the dashboard view, initialize its elements
+            if (fxmlFile.equals("user-dashboard-view.fxml")) {
+                System.out.println("Initializing dashboard content...");
+                
+                // Find and retrieve UI elements
+                studentNameText = (Text) content.lookup("#studentNameText");
+                studentIdText = (Text) content.lookup("#studentIdText");
+                academicLevelText = (Text) content.lookup("#academicLevelText");
+                currentSemText = (Text) content.lookup("#currentSemText");
+                graduationDateText = (Text) content.lookup("#graduationDateText");
+                eventsTable = (TableView<Event>) content.lookup("#eventsTable");
+                
+                if (eventsTable != null) {
+                    eventNameColumn = (TableColumn<Event, String>) eventsTable.getColumns().get(0);
+                    eventDateColumn = (TableColumn<Event, String>) eventsTable.getColumns().get(1);
+                    eventLocationColumn = (TableColumn<Event, String>) eventsTable.getColumns().get(2);
+                    
+                    // Set up tables and load data
+                    setupRegisteredEventsTable();
+                    loadRegisteredEvents();
+                } else {
+                    System.err.println("ERROR: Could not find eventsTable in the loaded FXML");
+                }
+                
+                // Find courses table if it exists
+                TableView<Course> coursesTable = (TableView<Course>) content.lookup("#coursesTable");
+                if (coursesTable != null) {
+                    System.out.println("Found courses table, setting up courses...");
+                    loadEnrolledCourses(coursesTable);
+                } else {
+                    System.err.println("ERROR: Could not find coursesTable in the loaded FXML");
+                }
+                
+                // Update user information display
+                updateUserInfo();
+                
+                System.out.println("Dashboard content initialized");
+            }
         } catch (IOException e) {
+            System.err.println("Error loading content: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    private void loadEnrolledCourses(TableView<Course> coursesTable) {
+        try {
+            if (UserDatabase.CurrentUser == null) {
+                System.err.println("ERROR: CurrentUser is null, cannot load enrolled courses");
+                return;
+            }
+            
+            Student currentStudent = (Student) UserDatabase.CurrentUser;
+            System.out.println("Current Student: " + currentStudent.getUsername());
+            String studentSubjectsStr = currentStudent.getSubjects();
+            
+            System.out.println("Student Subjects: " + studentSubjectsStr);
+            
+            ObservableList<Course> enrolledCourses = FXCollections.observableArrayList();
+            
+            // Check if student has any subjects
+            if (studentSubjectsStr == null || studentSubjectsStr.trim().isEmpty()) {
+                System.out.println("Student has no registered subjects");
+                return;
+            }
+            
+            // Parse the student's subjects
+            String[] studentSubjects = studentSubjectsStr.split(",");
+            for (int i = 0; i < studentSubjects.length; i++) {
+                studentSubjects[i] = studentSubjects[i].trim().toUpperCase();
+                System.out.println("Subject " + (i+1) + ": " + studentSubjects[i]);
+            }
+            
+            // Create a set to track processed subjects (to avoid duplicates)
+            java.util.Set<String> processedSubjects = new java.util.HashSet<>();
+            
+            // First pass: Match existing courses with student's subjects
+            for (Course course : excelReader.courseList) {
+                String courseSubjectCode = course.getSubjectCode().trim().toUpperCase();
+                System.out.println("\nChecking course: " + course.getCourseName());
+                System.out.println("Subject code: '" + courseSubjectCode + "'");
+                
+                // Check each of the student's subjects
+                for (String studentSubject : studentSubjects) {
+                    if (studentSubject.isEmpty()) continue;
+                    
+                    System.out.println("Comparing with student subject: '" + studentSubject + "'");
+                    
+                    // Check for exact match
+                    if (courseSubjectCode.equals(studentSubject)) {
+                        // Only add if we haven't processed this subject yet
+                        if (!processedSubjects.contains(courseSubjectCode)) {
+                            System.out.println("✓ Match found! Adding course: " + course.getCourseName());
+                            enrolledCourses.add(course);
+                            processedSubjects.add(courseSubjectCode);
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Second pass: Add placeholders for subjects without courses
+            for (String studentSubject : studentSubjects) {
+                if (studentSubject.trim().isEmpty()) continue;
+                
+                if (!processedSubjects.contains(studentSubject)) {
+                    System.out.println("Creating placeholder for subject: " + studentSubject);
+                    
+                    // Create a basic course entry
+                    Course basicCourse = new Course(
+                        studentSubject,
+                        "No Course Found - See Advisor",
+                        "Not Assigned",
+                        "TBA"
+                    );
+                    basicCourse.setSubjectCode(studentSubject);
+                    
+                    enrolledCourses.add(basicCourse);
+                    processedSubjects.add(studentSubject);
+                }
+            }
+            
+            // Set up the table columns if not already set
+            if (coursesTable.getColumns().size() >= 4) {
+                TableColumn<Course, String> codeCol = (TableColumn<Course, String>) coursesTable.getColumns().get(0);
+                TableColumn<Course, String> nameCol = (TableColumn<Course, String>) coursesTable.getColumns().get(1);
+                TableColumn<Course, String> instrCol = (TableColumn<Course, String>) coursesTable.getColumns().get(2);
+                TableColumn<Course, String> schedCol = (TableColumn<Course, String>) coursesTable.getColumns().get(3);
+                
+                codeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCourseCode()));
+                nameCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCourseName()));
+                instrCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getInstructor()));
+                schedCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getSchedule()));
+            }
+            
+            // Set the courses in the table
+            coursesTable.setItems(enrolledCourses);
+            System.out.println("Total courses loaded: " + enrolledCourses.size());
+        } catch (Exception e) {
+            System.err.println("Error loading courses: " + e.getMessage());
             e.printStackTrace();
         }
     }

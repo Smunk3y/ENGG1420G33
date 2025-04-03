@@ -190,15 +190,17 @@ public class StudentProfile {
             // Create a basic course entry for subjects without corresponding courses
             Course basicCourse = new Course(
                     studentSubject,  // Use subject code as course code
-                    "N/A",          // No course name available
-                    studentSubject, // Use subject code
-                    "N/A",         // No section number
-                    0.0,           // Default capacity
-                    "N/A",         // No lecture time
-                    "N/A",         // No final exam time
-                    "N/A",         // No location
-                    "N/A"          // No instructor
+                    "No Course Found - See Advisor",  // Course name
+                    "Not Assigned",  // Instructor
+                    "TBA"            // Schedule
             );
+            
+            // Set additional properties using setters
+            basicCourse.setSubjectCode(studentSubject);
+            basicCourse.setCapacity(0.0);
+            basicCourse.setLocation("N/A");
+            basicCourse.setFinalExamDateTime("N/A");
+            basicCourse.setSectionNumber("N/A");
             enrolledCourses.add(basicCourse);
             processedSubjects.add(studentSubject);
         }

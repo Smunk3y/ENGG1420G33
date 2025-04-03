@@ -4,11 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="695edb3f-5990-4e7d-9437-02fba9d60a2e" name="Changes" comment="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
+    <list default="true" id="695edb3f-5990-4e7d-9437-02fba9d60a2e" name="Changes" comment="Fixed course management module for students when the same course would be repeated for all sections.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/UMS_Data.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/UMS_Data.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/AdminDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/AdminDashboardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Course.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Course.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/CourseManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/CourseManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Event.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Event.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/EventManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/EventManagementController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/ExcelFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/ExcelFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyManagementController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Student.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Student.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyDashboardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/StudentProfile.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/StudentProfile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UMS_Data.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UMS_Data.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UserDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UserDatabase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/resources/UMS_Data.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/resources/UMS_Data.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/resources/com/example/phase1_1420/event-management-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/resources/com/example/phase1_1420/event-management-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/resources/com/example/phase1_1420/user-dashboard-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/resources/com/example/phase1_1420/user-dashboard-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,61 +32,22 @@
   <component name="ExportToHTMLSettings">
     <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/exportToHTML" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-        <option value="FxmlFile" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;Tami-123&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Smunk3y/ENGG1420G33.git",
-    "accountId": "25501fd1-24f6-4f1f-ba15-3bbe1ec60835"
-  }
-}]]></component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 0
-}</component>
-  <component name="ProjectId" id="2vCnjkJWqxKTduS72q6e3BNQkJ9" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
-  </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.MainApp.executor": "Run",
-    "Application.TestExcelReading.executor": "Run",
-    "JUnit.All in ENGG1420-Group33-Phase1.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.MainApp.executor&quot;: &quot;Run&quot;,
+    &quot;Application.TestExcelReading.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.All in ENGG1420-Group33-Phase1.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\adeni\IdeaProjects\ENGG1420G33\ManagementSystem\src\main\resources\com\example\phase1_1420" />
       <recent name="$PROJECT_DIR$/ManagementSystem/src/main/resources/com/example/phase1_1420" />
       <recent name="$PROJECT_DIR$/ManagementSystem/src/main/resources" />
       <recent name="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420" />
@@ -107,7 +82,6 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task id="LOCAL-00001" summary="pull">
       <option name="closed" value="true" />
@@ -133,51 +107,8 @@
       <option name="project" value="LOCAL" />
       <updated>1743640816014</updated>
     </task>
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="695edb3f-5990-4e7d-9437-02fba9d60a2e" name="Changes" comment="Fixed course management module for students when the same course would be repeated for all sections." />
-      <created>1743658060586</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1743658060586</updated>
-      <workItem from="1743664648976" duration="6970000" />
-    </task>
-    <task id="LOCAL-00004" summary="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
-      <option name="closed" value="true" />
-      <created>1743658482386</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1743658482386</updated>
-    </task>
-    <task id="LOCAL-00005" summary="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
-      <option name="closed" value="true" />
-      <created>1743680864618</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1743680864618</updated>
-    </task>
-    <task id="LOCAL-00006" summary="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
-      <option name="closed" value="true" />
-      <created>1743681057872</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1743681057872</updated>
-    </task>
-    <task id="LOCAL-00007" summary="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
-      <option name="closed" value="true" />
-      <created>1743681279285</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1743681279285</updated>
-    </task>
-    <option name="localTasksCounter" value="8" />
+    <option name="localTasksCounter" value="4" />
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -194,8 +125,7 @@
     <MESSAGE value="pull" />
     <MESSAGE value="Homepage for users (student login). display student courses and information (wip)." />
     <MESSAGE value="Fixed course management module for students when the same course would be repeated for all sections." />
-    <MESSAGE value="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController" />
-    <option name="LAST_COMMIT_MESSAGE" value="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed course management module for students when the same course would be repeated for all sections." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

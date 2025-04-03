@@ -87,13 +87,38 @@ public class FacultyDashboardController {
     @FXML
     private void handleLogout() {
         try {
+            System.out.println("Logging out faculty: " + UserDatabase.CurrentUser.getUsername());
+            
+            // Save any pending changes to Excel
+            try {
+                // Save events
+                excelReader.writeEventsToExcel();
+                System.out.println("Event data saved to Excel");
+                
+                // Save courses if modified by faculty
+                excelReader.writeCoursesToExcel(excelReader.courseList);
+                System.out.println("Course data saved to Excel");
+                
+                System.out.println("All data saved successfully before logout");
+            } catch (Exception e) {
+                System.err.println("Error saving data before logout: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            // Clear current user
+            UserDatabase.CurrentUser = null;
+            
+            // Load login view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/phase1_1420/login-view.fxml"));
             Scene scene = new Scene(loader.load());
 
             Stage stage = (Stage) sidebarPane.getScene().getWindow();
             stage.setScene(scene);
             stage.setTitle("Login Page");
+            
+            System.out.println("Logout successful");
         } catch (IOException e) {
+            System.err.println("Error during logout: " + e.getMessage());
             e.printStackTrace();
         }
     }

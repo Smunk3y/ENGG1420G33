@@ -73,22 +73,95 @@ public class CourseManagementController {
         String username = UserDatabase.CurrentUser.getUsername();
         String id = UserDatabase.CurrentUser.getId();
         ObservableList<Course> userCourses = FXCollections.observableArrayList();
+        
+        // Reload courses from Excel to ensure we have the latest data
+        try {
+            excelReader.ReadingNameExcelFile();
+            allCourses.setAll(excelReader.courseList);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
 
-        for (Course course : allCourses) {
+        // Get the student's subjects
+        Student currentStudent = null;
+        for (Student student : excelReader.studentList) {
+            if (student.getId().equals(id)) {
+                currentStudent = student;
+                break;
+            }
+        }
+
+        if (currentStudent == null) {
+            courseTable.setItems(userCourses);
+            return;
+        }
+
+        String studentSubjectsStr = currentStudent.getSubjects();
+        if (studentSubjectsStr == null || studentSubjectsStr.trim().isEmpty()) {
+            courseTable.setItems(userCourses);
+            return;
+        }
+
+        // Split and clean subjects
+        String[] studentSubjects = studentSubjectsStr.split(",");
+        for (int i = 0; i < studentSubjects.length; i++) {
+            studentSubjects[i] = studentSubjects[i].trim().toUpperCase();
+        }
+
+        // Create a set to track processed subjects
+        java.util.Set<String> processedSubjects = new java.util.HashSet<>();
+
+        // First pass: Match existing courses
+        for (Course course : excelReader.courseList) {  // Use excelReader.courseList directly
+            String courseSubjectCode = course.getCode().trim().toUpperCase();
+            
+            // Check if this course belongs to the faculty
             if (course.getTeacherName().equals(username)) {
                 userCourses.add(course);
+                processedSubjects.add(courseSubjectCode);
                 continue;
             }
-            for (Student student : excelReader.studentList) {
-                if (student.getId().equals(id)) {
-                    String[] enrolledCourseCodes = student.getSubjects().split(",");
-                    if (Arrays.asList(enrolledCourseCodes).contains(course.getCode())) {
+
+            // Check if this course matches any of the student's subjects
+            for (String studentSubject : studentSubjects) {
+                if (studentSubject.isEmpty()) continue;
+                
+                if (courseSubjectCode.equals(studentSubject)) {
+                    if (!processedSubjects.contains(courseSubjectCode)) {
                         userCourses.add(course);
+                        processedSubjects.add(courseSubjectCode);
                         break;
                     }
                 }
             }
         }
+
+        // Second pass: Add basic entries for subjects without corresponding courses
+        for (String studentSubject : studentSubjects) {
+            if (studentSubject.trim().isEmpty()) continue;
+            
+            if (!processedSubjects.contains(studentSubject)) {
+                // Use the 3-parameter constructor
+                Course basicCourse = new Course(
+                    studentSubject,  // Use subject code as course code
+                    "No Course Found - See Advisor",  // Course name
+                    studentSubject  // Subject code
+                );
+                
+                // Set additional properties using setters
+                basicCourse.setSectionNumber("N/A");
+                basicCourse.setCapacity(0.0);
+                basicCourse.setSchedule("N/A");
+                basicCourse.setFinalExamDateTime("N/A");
+                basicCourse.setLocation("N/A");
+                basicCourse.setInstructor("N/A");
+                
+                userCourses.add(basicCourse);
+                processedSubjects.add(studentSubject);
+            }
+        }
+
         courseTable.setItems(userCourses);
     }
 
@@ -132,10 +205,10 @@ public class CourseManagementController {
             subjectDropdown.setValue(course.getCode());
             sectionField.setText(course.getSectionNumber());
             locationField.setText(course.getLocation());
-            lectureTimeField.setText(course.getLectureTime());
+            lectureTimeField.setText(course.getSchedule());
             finalExamField.setText(course.getFinalExamDateTime());
             capacityField.setText(String.valueOf(course.getCapacity()));
-            facultyDropdown.setValue(course.getTeacherName());
+            facultyDropdown.setValue(course.getInstructor());
         }
     }
 
@@ -150,28 +223,30 @@ public class CourseManagementController {
                     showAlert("Duplicate", "Course code already exists.", Alert.AlertType.WARNING);
                     return;
                 }
-                if(c.getLectureTime().equals(lectureTimeField.getText()) && c.getLocation().equals(locationField.getText())){
-                    showAlert("Duplicate", "Lecutre Time & Location already exsists ", Alert.AlertType.WARNING);
+                if(c.getSchedule().equals(lectureTimeField.getText()) && c.getLocation().equals(locationField.getText())){
+                    showAlert("Duplicate", "Lecture Time & Location already exists ", Alert.AlertType.WARNING);
                     return;
                 }
             }
 
-
+            // Create course with the 3-parameter constructor
             Course newCourse = new Course(
                     code,
                     courseNameField.getText(),
-                    subjectDropdown.getValue(),
-                    sectionField.getText(),
-                    capacity,
-                    lectureTimeField.getText(),
-                    finalExamField.getText(),
-                    locationField.getText(),
-                    facultyDropdown.getValue()
+                    subjectDropdown.getValue()
             );
+            
+            // Set additional properties using setters
+            newCourse.setSectionNumber(sectionField.getText());
+            newCourse.setCapacity(capacity);
+            newCourse.setSchedule(lectureTimeField.getText());
+            newCourse.setFinalExamDateTime(finalExamField.getText());
+            newCourse.setLocation(locationField.getText());
+            newCourse.setInstructor(facultyDropdown.getValue());
 
             // Add course to faculty object if found
             for (Faculty faculty : excelReader.facultyList) {
-                if (faculty.getUsername().equals(newCourse.getTeacherName())) {
+                if (faculty.getUsername().equals(newCourse.getInstructor())) {
                     String existing = faculty.getCoursesOffered();
                     if (!existing.contains(newCourse.getCourseName())) {
                         if (existing.isEmpty()) {
@@ -182,7 +257,6 @@ public class CourseManagementController {
                     }
                 }
             }
-
 
             allCourses.add(newCourse);
             excelReader.courseList.add(newCourse);
@@ -204,18 +278,17 @@ public class CourseManagementController {
         try {
             selected.setCourseCode(courseCodeField.getText());
             selected.setCourseName(courseNameField.getText());
-            selected.setCode(subjectDropdown.getValue());
+            selected.setSubjectCode(subjectDropdown.getValue());
             selected.setSectionNumber(sectionField.getText());
             selected.setLocation(locationField.getText());
-            selected.setLectureTime(lectureTimeField.getText());
+            selected.setSchedule(lectureTimeField.getText());
             selected.setFinalExamDateTime(finalExamField.getText());
             selected.setCapacity(Double.parseDouble(capacityField.getText()));
-            selected.setTeacherName(facultyDropdown.getValue());
-
+            selected.setInstructor(facultyDropdown.getValue());
 
             // Update faculty's offered courses
             for (Faculty faculty : excelReader.facultyList) {
-                if (faculty.getUsername().equals(selected.getTeacherName())) {
+                if (faculty.getUsername().equals(selected.getInstructor())) {
                     String existing = faculty.getCoursesOffered();
                     if (!existing.contains(selected.getCourseName())) {
                         if (existing.isEmpty()) {
@@ -287,7 +360,7 @@ public class CourseManagementController {
             return;
         }
 
-        EnrollmentManager.showForCourse(selected, excelReader.studentList, excelReader, Double.parseDouble(selected.getCapacity()));
+        EnrollmentManager.showForCourse(selected, excelReader.studentList, excelReader, selected.getCapacity());
     }
 
 }

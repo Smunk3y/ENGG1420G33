@@ -1,28 +1,107 @@
 package com.example.phase1_1420;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Event {
 
     protected String eventID;
     protected String eventName;
     protected String description;
     protected String location;
-    protected String dateTime;
+    protected String date;
+    protected String time;
     protected double capacity;
     protected String cost;
+    
+    
     protected String registeredStudents;
     protected String type;
 
-    public Event(String eventID, String eventName, String description, String location, String dateTime, double capacity,
-                 String cost, String registeredStudents, String type){
+    public Event(String eventID, String eventName, String description, String location, String date, double capacity,
+                 String cost, String registeredStudents, String type) {
         this.eventID = eventID;
         this.eventName = eventName;
         this.description = description;
         this.location = location;
-        this.dateTime = dateTime;
+        this.date = formatDate(date);
+        this.time = "N/A";
         this.capacity = capacity;
         this.cost = cost;
         this.registeredStudents = registeredStudents;
-        this.type = type;
+        this.type = type != null && !type.equals("default") ? type : "Workshop";
+    }
+
+    public Event(String eventID, String eventName, String description, String location, String date, String time, double capacity, String cost, String registeredStudents, String type) {
+        this.eventID = eventID;
+        this.eventName = eventName;
+        this.description = description;
+        this.location = location;
+        this.date = formatDate(date);
+        this.time = formatTime(time);
+        this.capacity = capacity;
+        this.cost = cost;
+        this.registeredStudents = registeredStudents;
+        this.type = type != null && !type.equals("default") ? type : "Workshop";
+    }
+
+    private String formatDate(String inputDate) {
+        if (inputDate == null || inputDate.isEmpty()) {
+            return "";
+        }
+        try {
+            // Try different date formats
+            SimpleDateFormat[] formats = {
+                new SimpleDateFormat("yyyy-MM-dd"),
+                new SimpleDateFormat("MM/dd/yyyy"),
+                new SimpleDateFormat("dd/MM/yyyy")
+            };
+            
+            for (SimpleDateFormat format : formats) {
+                try {
+                    Date date = format.parse(inputDate);
+                    return format.format(date);
+                } catch (ParseException e) {
+                    // Try next format
+                    continue;
+                }
+            }
+            
+            // If none of the formats work, return the original date
+            return inputDate;
+        } catch (Exception e) {
+            System.err.println("Error formatting date: " + e.getMessage());
+            return inputDate;
+        }
+    }
+
+    private String formatTime(String inputTime) {
+        if (inputTime == null || inputTime.isEmpty() || inputTime.equals("N/A")) {
+            return "N/A";
+        }
+        try {
+            // Try to parse the time in various formats
+            SimpleDateFormat[] formats = {
+                new SimpleDateFormat("HH:mm"),
+                new SimpleDateFormat("h:mm"),
+                new SimpleDateFormat("H:mm"),
+                new SimpleDateFormat("HH:mm a")
+            };
+            
+            for (SimpleDateFormat format : formats) {
+                try {
+                    Date time = format.parse(inputTime);
+                    // Format the time consistently as HH:mm
+                    return new SimpleDateFormat("HH:mm").format(time);
+                } catch (ParseException e) {
+                    continue;
+                }
+            }
+            return inputTime; // Return original if no format matches
+        } catch (Exception e) {
+            return inputTime; // Return original if parsing fails
+        }
     }
 
     public String getEventID() {
@@ -57,12 +136,24 @@ public class Event {
         this.location = location;
     }
 
-    public String getDateTime() {
-        return dateTime;
+    public String getDate() {
+        return date;
     }
 
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
+    public void setDate(String date) {
+        this.date = formatDate(date);
+    }
+
+    public String getTime() {
+        return time != null && !time.isEmpty() ? time : "N/A";
+    }
+
+    public void setTime(String time) {
+        this.time = formatTime(time);
+    }
+
+    public String getDateTime() {
+        return date + (time.equals("N/A") ? "" : " " + time);
     }
 
     public double getCapacity() {
@@ -82,7 +173,21 @@ public class Event {
     }
 
     public String getRegisteredStudents() {
-        return registeredStudents;
+        return registeredStudents != null ? registeredStudents : "";
+    }
+
+    public boolean isStudentRegistered(String username) {
+        if (registeredStudents == null || registeredStudents.isEmpty()) {
+            return false;
+        }
+        // Split by comma and trim each name
+        String[] students = registeredStudents.split(",");
+        for (String student : students) {
+            if (student.trim().equals(username)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setRegisteredStudents(String registeredStudents) {
@@ -90,11 +195,11 @@ public class Event {
     }
 
     public String getType() {
-        return type;
+        return type != null && !type.equals("default") ? type : "Workshop";
     }
 
     public void setType(String type) {
-        this.type = type;
+        this.type = type != null && !type.equals("default") ? type : "Workshop";
     }
 
     @Override
@@ -103,7 +208,8 @@ public class Event {
                 " | Name: " + eventName +
                 " | Description: " + description +
                 " | Location: " + location +
-                " | Date/Time: " + dateTime +
+                " | Date: " + date +
+                " | Time: " + time +
                 " | Capacity: " + capacity +
                 " | Cost: " + cost +
                 " | Students Registered: " + registeredStudents +

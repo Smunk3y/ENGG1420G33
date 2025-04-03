@@ -202,15 +202,18 @@ public class UserDashboardViewController implements Initializable {
             // Create a basic course entry for subjects without corresponding courses
             Course basicCourse = new Course(
                 studentSubject,  // Use subject code as course code
-                "N/A",          // No course name available
-                studentSubject, // Use subject code
-                "N/A",         // No section number
-                0.0,           // Default capacity
-                "N/A",         // No lecture time
-                "N/A",         // No final exam time
-                "N/A",         // No location
-                "N/A"          // No instructor
+                "No Course Found - See Advisor",  // Course name
+                studentSubject   // Subject code
             );
+            
+            // Set additional properties using setters
+            basicCourse.setSectionNumber("N/A");
+            basicCourse.setCapacity(0.0);
+            basicCourse.setSchedule("N/A");
+            basicCourse.setFinalExamDateTime("N/A");
+            basicCourse.setLocation("N/A");
+            basicCourse.setInstructor("N/A");
+            
             enrolledCourses.add(basicCourse);
             processedSubjects.add(studentSubject);
         }
@@ -223,14 +226,30 @@ public class UserDashboardViewController implements Initializable {
     private void loadEventsTable() {
         // Filter events based on student's registration
         ObservableList<Event> registeredEvents = FXCollections.observableArrayList();
-        String studentId = currentStudent.getUsername();
+        String username = currentStudent.getUsername();
+        
+        System.out.println("Checking events for student: " + username);
         
         for (Event event : excelReader.eventList) {
-            if (event.getRegisteredStudents().contains(studentId)) {
+            System.out.println("Checking event: " + event.getEventName());
+            System.out.println("Registered students: " + event.getRegisteredStudents());
+            
+            // First check if the registration was removed during this session
+            if (UserDatabase.wasRegistrationRemoved(event.getEventID(), username)) {
+                System.out.println("Registration was removed for this event during this session - skipping");
+                continue;
+            }
+            
+            // Check if the student is registered by username
+            if (event.isStudentRegistered(username)) {
+                System.out.println("Student is registered for this event - adding to table");
                 registeredEvents.add(event);
+            } else {
+                System.out.println("Student is not registered for this event");
             }
         }
         
+        System.out.println("Total registered events found: " + registeredEvents.size());
         eventsTable.setItems(registeredEvents);
     }
 }

@@ -11,7 +11,7 @@
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.phase1_1420.UserDashboardViewController"
+      fx:controller="com.example.phase1_1420.UserDashboardController"
       spacing="15"
 
       styleClass="dashboard-content">

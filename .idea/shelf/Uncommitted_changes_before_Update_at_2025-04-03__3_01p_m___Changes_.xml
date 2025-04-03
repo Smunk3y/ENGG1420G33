@@ -1,0 +1,19 @@
+<changelist name="Uncommitted_changes_before_Update_at_2025-04-03,_3_01 p_m__[Changes]" date="1743706889539" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2025-04-03,_3_01 p_m__[Changes]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 2025-04-03, 3:01 p.m. [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="ManagementSystem/UMS_Data.xlsx" />
+    <option name="AFTER_PATH" value="ManagementSystem/UMS_Data.xlsx" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2025-04-03,_3_01 p_m__[Changes]/UMS_Data.xlsx" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="ManagementSystem/src/main/resources/UMS_Data.xlsx" />
+    <option name="AFTER_PATH" value="ManagementSystem/src/main/resources/UMS_Data.xlsx" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2025-04-03,_3_01 p_m__[Changes]/UMS_Data1.xlsx" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="ManagementSystem/src/main/java/com/example/phase1_1420/UMS_Data.xlsx" />
+    <option name="AFTER_PATH" value="ManagementSystem/src/main/java/com/example/phase1_1420/UMS_Data.xlsx" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2025-04-03,_3_01 p_m__[Changes]/UMS_Data2.xlsx" />
+  </binary>
+</changelist>

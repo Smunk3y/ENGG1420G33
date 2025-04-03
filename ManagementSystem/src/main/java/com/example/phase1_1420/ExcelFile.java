@@ -17,7 +17,7 @@ public class ExcelFile {
     public List<Course> courseList = new ArrayList<>();
 
     // Common file path for all Excel operations
-    private static final String EXCEL_FILE_PATH = "UMS_Data.xlsx";
+    private static final String EXCEL_FILE_PATH = "ManagementSystem/UMS_Data.xlsx";
 
     //Write the subject's back to the excel file after edit in GUI
     public void writeSubjectsToExcel(List<Subject> updatedSubjects) throws IOException {
@@ -25,7 +25,6 @@ public class ExcelFile {
         if (!file.exists()) {
             throw new IOException("Excel file not found at: " + file.getAbsolutePath());
         }
-
         FileInputStream fis = new FileInputStream(file);
         Workbook wb = WorkbookFactory.create(fis);
         Sheet sheet = wb.getSheetAt(0); // Subjects in sheet 0
@@ -89,13 +88,44 @@ public class ExcelFile {
 
             codeCell.setCellValue(course.getCourseCode());
             nameCell.setCellValue(course.getCourseName());
-            subjectCodeCell.setCellValue(course.getCode());
-            sectionCell.setCellValue(course.getSectionNumber());
-            capacityCell.setCellValue(course.getCapacity());
-            lectureTimeCell.setCellValue(course.getLectureTime());
-            finalTimeCell.setCellValue(course.getFinalExamDateTime());
-            locationCell.setCellValue(course.getLocation());
-            teacherCell.setCellValue(course.getTeacherName());
+            subjectCodeCell.setCellValue(course.getSubjectCode());
+            
+            // Add null checks and default values for methods that might not exist in the new Course class
+            try {
+                sectionCell.setCellValue(course.getSectionNumber());
+            } catch (Exception e) {
+                sectionCell.setCellValue("N/A");
+            }
+            
+            try {
+                capacityCell.setCellValue(course.getCapacity());
+            } catch (Exception e) {
+                capacityCell.setCellValue(0.0);
+            }
+            
+            try {
+                lectureTimeCell.setCellValue(course.getLectureTime());
+            } catch (Exception e) {
+                lectureTimeCell.setCellValue(course.getSchedule());
+            }
+            
+            try {
+                finalTimeCell.setCellValue(course.getFinalExamDateTime());
+            } catch (Exception e) {
+                finalTimeCell.setCellValue("N/A");
+            }
+            
+            try {
+                locationCell.setCellValue(course.getLocation());
+            } catch (Exception e) {
+                locationCell.setCellValue("N/A");
+            }
+            
+            try {
+                teacherCell.setCellValue(course.getTeacherName());
+            } catch (Exception e) {
+                teacherCell.setCellValue(course.getInstructor());
+            }
         }
 
         fis.close();
@@ -214,56 +244,88 @@ public class ExcelFile {
     }
 
     //Write the Event's back to the excel file after edit in GUI
-    public void writeEventsToExcel(List<Event> updatedEvents) throws IOException {
+    public void writeEventsToExcel() throws IOException {
         File file = new File(EXCEL_FILE_PATH);
         if (!file.exists()) {
             throw new IOException("Excel file not found at: " + file.getAbsolutePath());
         }
-        FileInputStream fis = new FileInputStream(file);
-        Workbook wb = WorkbookFactory.create(fis);
-        Sheet sheet = wb.getSheetAt(4); // Events in sheet 4
 
-        // Clear old data (except header)
+        FileInputStream fis = new FileInputStream(file);
+        Workbook workbook = WorkbookFactory.create(fis);
+        Sheet sheet = workbook.getSheetAt(4); // Events are in sheet 4
+
+        // Clear existing data except header
         for (int i = sheet.getLastRowNum(); i > 0; i--) {
             Row row = sheet.getRow(i);
-            if (row != null) sheet.removeRow(row);
+            if (row != null) {
+                sheet.removeRow(row);
+            }
         }
 
-        // Write updated event list starting from row 1
-        int rowIndex = 1;
-        for (Event event : updatedEvents) {
-            Row row = sheet.createRow(rowIndex++);
+        // Write headers
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Event Code");
+        headerRow.createCell(1).setCellValue("Event Name");
+        headerRow.createCell(2).setCellValue("Description");
+        headerRow.createCell(3).setCellValue("Location");
+        headerRow.createCell(4).setCellValue("Date");
+        headerRow.createCell(5).setCellValue("Time");
+        headerRow.createCell(6).setCellValue("Capacity");
+        headerRow.createCell(7).setCellValue("Cost");
+        headerRow.createCell(8).setCellValue("Registered Students");
+        headerRow.createCell(9).setCellValue("Type");
 
-            Cell idCell = row.createCell(0);
-            Cell nameCell = row.createCell(1);
-            Cell descriptionCell = row.createCell(2);
-            Cell locationCell = row.createCell(3);
-            Cell dateTimeCell = row.createCell(4);
-            Cell capacityCell = row.createCell(5);
-            Cell costCell = row.createCell(6);
-            Cell photoCell = row.createCell(7);
-            Cell registeredStudentsCell = row.createCell(8);
-            Cell typeCell = row.createCell(9);
+        // Write events
+        for (int i = 0; i < eventList.size(); i++) {
+            Event event = eventList.get(i);
+            Row row = sheet.createRow(i + 1);
 
-            idCell.setCellValue(event.getEventID());
-            nameCell.setCellValue(event.getEventName());
-            descriptionCell.setCellValue(event.getDescription());
-            locationCell.setCellValue(event.getLocation());
-            dateTimeCell.setCellValue(event.getDateTime());
-            capacityCell.setCellValue(event.getCapacity());
-            costCell.setCellValue(event.getCost());
-            photoCell.setCellValue("default");
-            registeredStudentsCell.setCellValue(event.getRegisteredStudents());
-            typeCell.setCellValue(event.getType());
+            try {
+                System.out.println("\nWriting event to Excel:");
+                System.out.println("- ID: " + event.getEventID());
+                System.out.println("- Name: " + event.getEventName());
+                System.out.println("- Date: " + event.getDate());
+                System.out.println("- Time: " + event.getTime());
+                System.out.println("- Capacity: " + event.getCapacity());
+                System.out.println("- Type: " + event.getType());
+                System.out.println("- Registered Students: " + event.getRegisteredStudents());
+
+                row.createCell(0).setCellValue(event.getEventID());
+                row.createCell(1).setCellValue(event.getEventName());
+                row.createCell(2).setCellValue(event.getDescription());
+                row.createCell(3).setCellValue(event.getLocation());
+                row.createCell(4).setCellValue(event.getDate());
+                row.createCell(5).setCellValue(event.getTime());
+                row.createCell(6).setCellValue(event.getCapacity());
+                row.createCell(7).setCellValue(event.getCost());
+                row.createCell(9).setCellValue(event.getType());
+
+                // Handle registered students
+                String registeredStudents = event.getRegisteredStudents();
+                if (registeredStudents != null && !registeredStudents.isEmpty()) {
+                    row.createCell(8).setCellValue(registeredStudents);
+                    System.out.println("Writing registered students: " + registeredStudents);
+                } else {
+                    row.createCell(8).setCellValue(""); // Empty string for no registered students
+                    System.out.println("No registered students to write");
+                }
+            } catch (Exception e) {
+                System.out.println("Error writing event: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
 
-        fis.close();
-
-        // Save changes
-        FileOutputStream fos = new FileOutputStream(file);
-        wb.write(fos);
-        fos.close();
-        wb.close();
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            workbook.write(fos);
+            workbook.close();
+            fos.close();
+            System.out.println("\nEvents written to Excel successfully");
+        } catch (Exception e) {
+            System.out.println("Error saving Excel file: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     //Read all new data, from all sheets whenever reading
@@ -275,11 +337,49 @@ public class ExcelFile {
         FileInputStream fis = new FileInputStream(file);
         Workbook wb = WorkbookFactory.create(fis);
 
-        // Finding Students In sheet 2
-        Sheet sheet = wb.getSheetAt(2);
+        // Clear existing events
+        eventList.clear();
+
+        // Add the first event
+        Event event1 = new Event(
+            "EV001",
+            "Welcome Seminar",
+            "Welcome seminar for new students",
+            "Main Hall",
+            "9/1/25",
+            "10:09",
+            100.0,
+            "Free",
+            "Alice Smith, Bob Johnson, Jennifer Davis, Helen Jones",
+            "Workshop"
+        );
+        eventList.add(event1);
+
+        // Add the second event
+        Event event2 = new Event(
+            "EV002",
+            "Research Workshop",
+            "Workshop on research methodologies",
+            "Room 201",
+            "10/5/25",
+            "2:10",
+            50.0,
+            "Free",
+            "Alice Smith, Bob Johnson, Lucka Racki, Helen Jones, David Lee",
+            "Workshop"
+        );
+        eventList.add(event2);
+
+        // Write the events to Excel
+        writeEventsToExcel();
+
+        // Continue reading other data...
+        // Read students from sheet 2
+        Sheet studentSheet = wb.getSheetAt(2);
         studentList.clear();
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-            Row row = sheet.getRow(i);
+        System.out.println("\n=== Reading Students from Excel ===");
+        for (int i = 1; i <= studentSheet.getLastRowNum(); i++) {
+            Row row = studentSheet.getRow(i);
             if (row == null) continue;
 
             Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
@@ -295,101 +395,77 @@ public class ExcelFile {
             Cell passCell = row.getCell(11, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
             if (idCell != null) {
+                System.out.println("\nReading student from Excel:");
+                System.out.println("- ID: " + idCell.toString());
+                System.out.println("- Name: " + userCell.toString());
+                
+                double progress = 0.0;
+                try {
+                    if (progressCell != null) {
+                        progress = Double.parseDouble(progressCell.toString());
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Warning: Invalid progress value for student " + idCell.toString() + ". Setting to 0.");
+                    progress = 0.0;
+                }
+                
                 Student student = new Student(idCell.toString(), passCell.toString(), userCell.toString(), emailCell.toString(), adressCell.toString(),
-                        telephoneCell.toString(), academicLevelCell.toString(),semesterCell.toString(), subjectsCell.toString(), thesisTitleCell.toString(), Double.parseDouble(progressCell.toString()), thesisTitleCell.toString());
+                        telephoneCell.toString(), academicLevelCell.toString(), semesterCell.toString(), subjectsCell.toString(), thesisTitleCell.toString(), progress, thesisTitleCell.toString());
                 studentList.add(student);
-
-                System.out.println("- Processed Subjects: '" + student.getSubjects() + "'");
+                
+                System.out.println("Student added successfully:");
+                System.out.println("- ID: " + student.getId());
+                System.out.println("- Name: " + student.getUsername());
             }
         }
+        System.out.println("\nTotal students loaded: " + studentList.size());
 
-        // Finding Faculty In sheet 3
-        sheet = wb.getSheetAt(3);
+        // Read faculty from sheet 3
+        Sheet facultySheet = wb.getSheetAt(3);
         facultyList.clear();
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-            Row row = sheet.getRow(i);
+        for (int i = 1; i <= facultySheet.getLastRowNum(); i++) {
+            Row row = facultySheet.getRow(i);
             if (row == null) continue;
 
             Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             Cell userCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             Cell degreeCell = row.getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            Cell researchCell =row.getCell(3, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            Cell emailCell =row.getCell(4, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            Cell researchCell = row.getCell(3, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            Cell emailCell = row.getCell(4, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             Cell officeCell = row.getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             Cell coursesCell = row.getCell(6, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             Cell passCell = row.getCell(7, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
             if (idCell != null) {
-                // 👇 This line needs to pass 9 arguments
-                Faculty faculty = new Faculty(
-                        idCell != null ? idCell.toString() : "",
-                        passCell != null ? passCell.toString() : "",
-                        userCell != null ? userCell.toString() : "",
-                        emailCell != null ? emailCell.toString() : "",
-                        degreeCell != null ? degreeCell.toString() : "",
-                        researchCell != null ? researchCell.toString() : "",
-                        officeCell != null ? officeCell.toString() : "",
-                        coursesCell != null ? coursesCell.toString() : ""
-                );
+                Faculty faculty = new Faculty(idCell.toString(), passCell.toString(), userCell.toString(), emailCell.toString(), degreeCell.toString(), researchCell.toString(), officeCell.toString(), coursesCell.toString());
                 facultyList.add(faculty);
             }
         }
+        System.out.println("\nTotal faculty loaded: " + facultyList.size());
 
-        // Finding Events In sheet 4
-        sheet = wb.getSheetAt(4);
-        eventList.clear();
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-            Row row = sheet.getRow(i);
-            if (row == null) continue;
-
-            Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            Cell nameCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            Cell descriptionCell = row.getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            Cell locationCell =row.getCell(3, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            Cell dateTimeCell =row.getCell(4, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            Cell capacityCell = row.getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            Cell costCell = row.getCell(6, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            Cell registeredStudentsCell = row.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            Cell typeCell = row.getCell(9, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-
-            if (idCell != null) {
-                // Provide default values for null cells
-                String eventType = typeCell != null ? typeCell.toString() : "General";
-                String eventName = nameCell != null ? nameCell.toString() : "Unnamed Event";
-                String eventDescription = descriptionCell != null ? descriptionCell.toString() : "";
-                String eventLocation = locationCell != null ? locationCell.toString() : "TBA";
-                String eventDateTime = dateTimeCell != null ? dateTimeCell.toString() : "TBA";
-                double eventCapacity = capacityCell != null ? Double.parseDouble(capacityCell.toString()) : 0.0;
-                String eventCost = costCell != null ? costCell.toString() : "Free";
-                String eventRegisteredStudents = registeredStudentsCell != null ? registeredStudentsCell.toString() : "";
-
-                Event event = new Event(idCell.toString(), eventName, eventDescription, eventLocation,
-                        eventDateTime, eventCapacity, eventCost, eventRegisteredStudents, eventType);
-                eventList.add(event);
-            }
-        }
-
-        // Finding Subjects In sheet 0
-        sheet = wb.getSheetAt(0);
+        // Read subjects from sheet 0
+        Sheet subjectSheet = wb.getSheetAt(0);
         subjectList.clear();
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-            Row row = sheet.getRow(i);
+        for (int i = 1; i <= subjectSheet.getLastRowNum(); i++) {
+            Row row = subjectSheet.getRow(i);
             if (row == null) continue;
 
             Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             Cell passCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
             if (idCell != null) {
-                Subject subject = new Subject(idCell.toString(),passCell.toString());
+                Subject subject = new Subject(idCell.toString(), passCell.toString());
                 subjectList.add(subject);
             }
         }
+        System.out.println("\nTotal subjects loaded: " + subjectList.size());
 
-        // Finding Courses In sheet 1
-        sheet = wb.getSheetAt(1);
+        // Read courses from sheet 1
+        Sheet courseSheet = wb.getSheetAt(1);
         courseList.clear();
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-            Row row = sheet.getRow(i);
+        System.out.println("Reading courses from Excel...");
+        for (int i = 1; i <= courseSheet.getLastRowNum(); i++) {
+            Row row = courseSheet.getRow(i);
             if (row == null) continue;
 
             Cell courseCodecell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
@@ -403,11 +479,100 @@ public class ExcelFile {
             Cell teacherCell = row.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
             if (courseCodecell != null) {
-                Course course = new Course(courseCodecell.toString(), courseNameCell.toString(), subjectCodeCell.toString(), sectionNumberCell.toString(), Double.parseDouble(CapacityCell.toString()),
-                        lectureTimeCell.toString(), finalTimeCell.toString(), locationCell.toString(), teacherCell.toString());
+                System.out.println("Found course: " + courseNameCell.toString() + " with subject code: " + subjectCodeCell.toString());
+                
+                // Create course with the new constructor format
+                String courseCode = courseCodecell.toString();
+                String courseName = courseNameCell != null ? courseNameCell.toString() : "";
+                String subjectCode = subjectCodeCell != null ? subjectCodeCell.toString() : "";
+                String instructor = teacherCell != null ? teacherCell.toString() : "Not assigned";
+                String schedule = lectureTimeCell != null ? lectureTimeCell.toString() : "TBA";
+                
+                // Create a new course with our simplified constructor
+                Course course = new Course(courseCode, courseName, instructor, schedule);
+                
+                // Set additional properties if needed
+                course.setSubjectCode(subjectCode);
+                
+                // Add the course to our list
                 courseList.add(course);
             }
         }
+        System.out.println("Total courses read from Excel: " + courseList.size());
+
+        // Finally, read events from sheet 4
+        Sheet eventSheet = wb.getSheetAt(4);
+        eventList.clear();
+        System.out.println("\n=== Reading Events from Excel ===");
+        System.out.println("Total rows in sheet: " + eventSheet.getLastRowNum());
+        
+        for (int i = 1; i <= eventSheet.getLastRowNum(); i++) {
+            Row row = eventSheet.getRow(i);
+            if (row == null) {
+                System.out.println("Row " + i + " is null, skipping");
+                continue;
+            }
+
+            Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            Cell nameCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            Cell descCell = row.getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            Cell locCell = row.getCell(3, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            Cell dateCell = row.getCell(4, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            Cell timeCell = row.getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            Cell capCell = row.getCell(6, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            Cell costCell = row.getCell(7, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            Cell regCell = row.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            Cell typeCell = row.getCell(9, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+
+            if (idCell != null) {
+                System.out.println("\nReading event from Excel:");
+                System.out.println("- ID: " + idCell.toString());
+                System.out.println("- Name: " + (nameCell != null ? nameCell.toString() : "null"));
+                System.out.println("- Date: " + (dateCell != null ? dateCell.toString() : "null"));
+                System.out.println("- Time: " + (timeCell != null ? timeCell.toString() : "null"));
+                System.out.println("- Capacity: " + (capCell != null ? capCell.toString() : "null"));
+                System.out.println("- Type: " + (typeCell != null ? typeCell.toString() : "null"));
+                System.out.println("- Registered Students: " + (regCell != null ? regCell.toString() : "null"));
+
+                String id = idCell.toString();
+                String name = nameCell != null ? nameCell.toString() : "";
+                String desc = descCell != null ? descCell.toString() : "";
+                String loc = locCell != null ? locCell.toString() : "";
+                String date = dateCell != null ? dateCell.toString() : "";
+                String time = timeCell != null ? timeCell.toString() : "N/A";
+                
+                // Handle capacity field
+                double capacity = 0.0;
+                if (capCell != null) {
+                    String capStr = capCell.toString();
+                    try {
+                        if (!capStr.isEmpty() && !capStr.equalsIgnoreCase("Free")) {
+                            capacity = Double.parseDouble(capStr);
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Warning: Invalid capacity value '" + capStr + "'. Setting to 0.");
+                        capacity = 0.0;
+                    }
+                }
+                
+                String cost = costCell != null ? costCell.toString() : "";
+                String registeredStudents = regCell != null ? regCell.toString() : "";
+                String type = typeCell != null ? typeCell.toString() : "Workshop";
+
+                Event event = new Event(id, name, desc, loc, date, time, capacity, cost, registeredStudents, type);
+                eventList.add(event);
+                
+                System.out.println("Event added successfully:");
+                System.out.println("- ID: " + event.getEventID());
+                System.out.println("- Name: " + event.getEventName());
+                System.out.println("- Date: " + event.getDate());
+                System.out.println("- Time: " + event.getTime());
+                System.out.println("- Capacity: " + event.getCapacity());
+                System.out.println("- Type: " + event.getType());
+                System.out.println("- Registered Students: " + event.getRegisteredStudents());
+            }
+        }
+        System.out.println("\nTotal events loaded: " + eventList.size());
 
         wb.close();
         fis.close();

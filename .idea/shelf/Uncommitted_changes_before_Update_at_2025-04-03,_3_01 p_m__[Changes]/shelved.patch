@@ -1,0 +1,1893 @@
+Index: ManagementSystem/src/main/java/com/example/phase1_1420/ExcelFile.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.phase1_1420;\n\nimport org.apache.poi.ss.usermodel.*;\n\nimport java.io.File;\nimport java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.IOException;\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class ExcelFile {\n    public List<Student> studentList = new ArrayList<>();\n    public List<Faculty> facultyList = new ArrayList<>();\n    public List<Event> eventList = new ArrayList<>();\n    public List<Subject> subjectList = new ArrayList<>();\n    public List<Course> courseList = new ArrayList<>();\n\n    // Common file path for all Excel operations\n    private static final String EXCEL_FILE_PATH = \"UMS_Data.xlsx\";\n\n    //Write the subject's back to the excel file after edit in GUI\n    public void writeSubjectsToExcel(List<Subject> updatedSubjects) throws IOException {\n        File file = new File(EXCEL_FILE_PATH);\n        if (!file.exists()) {\n            throw new IOException(\"Excel file not found at: \" + file.getAbsolutePath());\n        }\n\n        FileInputStream fis = new FileInputStream(file);\n        Workbook wb = WorkbookFactory.create(fis);\n        Sheet sheet = wb.getSheetAt(0); // Subjects in sheet 0\n\n        // Clear old data (except header)\n        for (int i = sheet.getLastRowNum(); i > 0; i--) {\n            Row row = sheet.getRow(i);\n            if (row != null) sheet.removeRow(row);\n        }\n\n        // Write updated subject list starting from row 1\n        int rowIndex = 1;\n        for (Subject subject : updatedSubjects) {\n            Row row = sheet.createRow(rowIndex++);\n            Cell codeCell = row.createCell(0);\n            Cell nameCell = row.createCell(1);\n\n            codeCell.setCellValue(subject.getCode());\n            nameCell.setCellValue(subject.getName());\n        }\n\n        fis.close();\n\n        // Save changes\n        FileOutputStream fos = new FileOutputStream(file);\n        wb.write(fos);\n        fos.close();\n        wb.close();\n    }\n\n    //Write Courses to excel\n    public void writeCoursesToExcel(List<Course> updatedCourses) throws IOException {\n        File file = new File(EXCEL_FILE_PATH);\n        if (!file.exists()) {\n            throw new IOException(\"Excel file not found at: \" + file.getAbsolutePath());\n        }\n        FileInputStream fis = new FileInputStream(file);\n        Workbook wb = WorkbookFactory.create(fis);\n        Sheet sheet = wb.getSheetAt(1); // Courses in sheet 1\n\n        // Clear old data (except header)\n        for (int i = sheet.getLastRowNum(); i > 0; i--) {\n            Row row = sheet.getRow(i);\n            if (row != null) sheet.removeRow(row);\n        }\n\n        // Write updated course list starting from row 1\n        int rowIndex = 1;\n        for (Course course : updatedCourses) {\n            Row row = sheet.createRow(rowIndex++);\n\n            Cell codeCell = row.createCell(0);\n            Cell nameCell = row.createCell(1);\n            Cell subjectCodeCell = row.createCell(2);\n            Cell sectionCell = row.createCell(3);\n            Cell capacityCell = row.createCell(4);\n            Cell lectureTimeCell = row.createCell(5);\n            Cell finalTimeCell = row.createCell(6);\n            Cell locationCell = row.createCell(7);\n            Cell teacherCell = row.createCell(8);\n\n            codeCell.setCellValue(course.getCourseCode());\n            nameCell.setCellValue(course.getCourseName());\n            subjectCodeCell.setCellValue(course.getCode());\n            sectionCell.setCellValue(course.getSectionNumber());\n            capacityCell.setCellValue(course.getCapacity());\n            lectureTimeCell.setCellValue(course.getLectureTime());\n            finalTimeCell.setCellValue(course.getFinalExamDateTime());\n            locationCell.setCellValue(course.getLocation());\n            teacherCell.setCellValue(course.getTeacherName());\n        }\n\n        fis.close();\n\n        // Save changes\n        FileOutputStream fos = new FileOutputStream(file);\n        wb.write(fos);\n        fos.close();\n        wb.close();\n    }\n\n    //Write Students to excel\n    public void writeStudentsToExcel(List<Student> updatedStudents) throws IOException {\n        File file = new File(EXCEL_FILE_PATH);\n        if (!file.exists()) {\n            throw new IOException(\"Excel file not found at: \" + file.getAbsolutePath());\n        }\n        FileInputStream fis = new FileInputStream(file);\n        Workbook wb = WorkbookFactory.create(fis);\n        Sheet sheet = wb.getSheetAt(2); // Students in sheet 2\n\n        // Clear old data (except header)\n        for (int i = sheet.getLastRowNum(); i > 0; i--) {\n            Row row = sheet.getRow(i);\n            if (row != null) sheet.removeRow(row);\n        }\n\n        // Write updated student list starting from row 1\n        int rowIndex = 1;\n        for (Student student : updatedStudents) {\n            Row row = sheet.createRow(rowIndex++);\n\n            Cell idCell = row.createCell(0);\n            Cell userCell = row.createCell(1);\n            Cell addressCell = row.createCell(2);\n            Cell telephoneCell = row.createCell(3);\n            Cell emailCell = row.createCell(4);\n            Cell academicLevelCell = row.createCell(5);\n            Cell semesterCell = row.createCell(6);\n            Cell photoCell = row.createCell(7);\n            Cell subjectsCell = row.createCell(8);\n            Cell thesisTitleCell = row.createCell(9);\n            Cell progressCell = row.createCell(10);\n            Cell passCell = row.createCell(11);\n\n            idCell.setCellValue(student.getId());\n            userCell.setCellValue(student.getUsername());\n            addressCell.setCellValue(student.getAddress());\n            telephoneCell.setCellValue(student.getTelephone());\n            emailCell.setCellValue(student.getEmail());\n            academicLevelCell.setCellValue(student.getAcademicLevel());\n            semesterCell.setCellValue(student.getCurrentSem());\n            photoCell.setCellValue(\"default\");\n            subjectsCell.setCellValue(student.getSubjects());\n            thesisTitleCell.setCellValue(student.getThesisTitle());\n            progressCell.setCellValue(student.getProgress());\n            passCell.setCellValue(student.getPassword());\n        }\n\n        fis.close();\n\n        // Save changes\n        FileOutputStream fos = new FileOutputStream(file);\n        wb.write(fos);\n        fos.close();\n        wb.close();\n    }\n\n    //Write Faculty to excel\n    public void writeFacultyToExcel(List<Faculty> updatedFaculty) throws IOException {\n        File file = new File(EXCEL_FILE_PATH);\n        if (!file.exists()) {\n            throw new IOException(\"Excel file not found at: \" + file.getAbsolutePath());\n        }\n        FileInputStream fis = new FileInputStream(file);\n        Workbook wb = WorkbookFactory.create(fis);\n        Sheet sheet = wb.getSheetAt(3); // Faculty in sheet 3\n\n        // Clear old data (except header)\n        for (int i = sheet.getLastRowNum(); i > 0; i--) {\n            Row row = sheet.getRow(i);\n            if (row != null) sheet.removeRow(row);\n        }\n\n        // Write updated faculty list starting from row 1\n        int rowIndex = 1;\n        for (Faculty faculty : updatedFaculty) {\n            Row row = sheet.createRow(rowIndex++);\n\n            Cell idCell = row.createCell(0);\n            Cell userCell = row.createCell(1);\n            Cell degreeCell = row.createCell(2);\n            Cell researchCell = row.createCell(3);\n            Cell emailCell = row.createCell(4);\n            Cell officeCell = row.createCell(5);\n            Cell coursesCell = row.createCell(6);\n            Cell passCell = row.createCell(7);\n\n            idCell.setCellValue(faculty.getId());\n            userCell.setCellValue(faculty.getUsername());\n            degreeCell.setCellValue(faculty.getDegree());\n            researchCell.setCellValue(faculty.getResearchArea());\n            emailCell.setCellValue(faculty.getEmail());\n            officeCell.setCellValue(faculty.getOfficeLocation());\n            coursesCell.setCellValue(faculty.getCoursesOffered());\n            passCell.setCellValue(faculty.getPassword());\n        }\n\n        fis.close();\n\n        // Save changes\n        FileOutputStream fos = new FileOutputStream(file);\n        wb.write(fos);\n        fos.close();\n        wb.close();\n    }\n\n    //Write the Event's back to the excel file after edit in GUI\n    public void writeEventsToExcel(List<Event> updatedEvents) throws IOException {\n        File file = new File(EXCEL_FILE_PATH);\n        if (!file.exists()) {\n            throw new IOException(\"Excel file not found at: \" + file.getAbsolutePath());\n        }\n        FileInputStream fis = new FileInputStream(file);\n        Workbook wb = WorkbookFactory.create(fis);\n        Sheet sheet = wb.getSheetAt(4); // Events in sheet 4\n\n        // Clear old data (except header)\n        for (int i = sheet.getLastRowNum(); i > 0; i--) {\n            Row row = sheet.getRow(i);\n            if (row != null) sheet.removeRow(row);\n        }\n\n        // Write updated event list starting from row 1\n        int rowIndex = 1;\n        for (Event event : updatedEvents) {\n            Row row = sheet.createRow(rowIndex++);\n\n            Cell idCell = row.createCell(0);\n            Cell nameCell = row.createCell(1);\n            Cell descriptionCell = row.createCell(2);\n            Cell locationCell = row.createCell(3);\n            Cell dateTimeCell = row.createCell(4);\n            Cell capacityCell = row.createCell(5);\n            Cell costCell = row.createCell(6);\n            Cell photoCell = row.createCell(7);\n            Cell registeredStudentsCell = row.createCell(8);\n            Cell typeCell = row.createCell(9);\n\n            idCell.setCellValue(event.getEventID());\n            nameCell.setCellValue(event.getEventName());\n            descriptionCell.setCellValue(event.getDescription());\n            locationCell.setCellValue(event.getLocation());\n            dateTimeCell.setCellValue(event.getDateTime());\n            capacityCell.setCellValue(event.getCapacity());\n            costCell.setCellValue(event.getCost());\n            photoCell.setCellValue(\"default\");\n            registeredStudentsCell.setCellValue(event.getRegisteredStudents());\n            typeCell.setCellValue(event.getType());\n        }\n\n        fis.close();\n\n        // Save changes\n        FileOutputStream fos = new FileOutputStream(file);\n        wb.write(fos);\n        fos.close();\n        wb.close();\n    }\n\n    //Read all new data, from all sheets whenever reading\n    public void ReadingNameExcelFile() throws IOException {\n        File file = new File(EXCEL_FILE_PATH);\n        if (!file.exists()) {\n            throw new IOException(\"Excel file not found at: \" + file.getAbsolutePath());\n        }\n        FileInputStream fis = new FileInputStream(file);\n        Workbook wb = WorkbookFactory.create(fis);\n\n        // Finding Students In sheet 2\n        Sheet sheet = wb.getSheetAt(2);\n        studentList.clear();\n        for (int i = 1; i <= sheet.getLastRowNum(); i++) {\n            Row row = sheet.getRow(i);\n            if (row == null) continue;\n\n            Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell userCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell adressCell = row.getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell telephoneCell = row.getCell(3, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell emailCell = row.getCell(4, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell academicLevelCell = row.getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell semesterCell = row.getCell(6, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell subjectsCell = row.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell thesisTitleCell = row.getCell(9, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell progressCell = row.getCell(10, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell passCell = row.getCell(11, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n\n            if (idCell != null) {\n                Student student = new Student(idCell.toString(), passCell.toString(), userCell.toString(), emailCell.toString(), adressCell.toString(),\n                        telephoneCell.toString(), academicLevelCell.toString(),semesterCell.toString(), subjectsCell.toString(), thesisTitleCell.toString(), Double.parseDouble(progressCell.toString()), thesisTitleCell.toString());\n                studentList.add(student);\n\n                System.out.println(\"- Processed Subjects: '\" + student.getSubjects() + \"'\");\n            }\n        }\n\n        // Finding Faculty In sheet 3\n        sheet = wb.getSheetAt(3);\n        facultyList.clear();\n        for (int i = 1; i <= sheet.getLastRowNum(); i++) {\n            Row row = sheet.getRow(i);\n            if (row == null) continue;\n\n            Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell userCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell degreeCell = row.getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell researchCell =row.getCell(3, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell emailCell =row.getCell(4, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell officeCell = row.getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell coursesCell = row.getCell(6, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell passCell = row.getCell(7, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n\n            if (idCell != null) {\n                // \uD83D\uDC47 This line needs to pass 9 arguments\n                Faculty faculty = new Faculty(\n                        idCell != null ? idCell.toString() : \"\",\n                        passCell != null ? passCell.toString() : \"\",\n                        userCell != null ? userCell.toString() : \"\",\n                        emailCell != null ? emailCell.toString() : \"\",\n                        degreeCell != null ? degreeCell.toString() : \"\",\n                        researchCell != null ? researchCell.toString() : \"\",\n                        officeCell != null ? officeCell.toString() : \"\",\n                        coursesCell != null ? coursesCell.toString() : \"\"\n                );\n                facultyList.add(faculty);\n            }\n        }\n\n        // Finding Events In sheet 4\n        sheet = wb.getSheetAt(4);\n        eventList.clear();\n        for (int i = 1; i <= sheet.getLastRowNum(); i++) {\n            Row row = sheet.getRow(i);\n            if (row == null) continue;\n\n            Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell nameCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell descriptionCell = row.getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell locationCell =row.getCell(3, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell dateTimeCell =row.getCell(4, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell capacityCell = row.getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell costCell = row.getCell(6, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell registeredStudentsCell = row.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell typeCell = row.getCell(9, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n\n            if (idCell != null) {\n                // Provide default values for null cells\n                String eventType = typeCell != null ? typeCell.toString() : \"General\";\n                String eventName = nameCell != null ? nameCell.toString() : \"Unnamed Event\";\n                String eventDescription = descriptionCell != null ? descriptionCell.toString() : \"\";\n                String eventLocation = locationCell != null ? locationCell.toString() : \"TBA\";\n                String eventDateTime = dateTimeCell != null ? dateTimeCell.toString() : \"TBA\";\n                double eventCapacity = capacityCell != null ? Double.parseDouble(capacityCell.toString()) : 0.0;\n                String eventCost = costCell != null ? costCell.toString() : \"Free\";\n                String eventRegisteredStudents = registeredStudentsCell != null ? registeredStudentsCell.toString() : \"\";\n\n                Event event = new Event(idCell.toString(), eventName, eventDescription, eventLocation,\n                        eventDateTime, eventCapacity, eventCost, eventRegisteredStudents, eventType);\n                eventList.add(event);\n            }\n        }\n\n        // Finding Subjects In sheet 0\n        sheet = wb.getSheetAt(0);\n        subjectList.clear();\n        for (int i = 1; i <= sheet.getLastRowNum(); i++) {\n            Row row = sheet.getRow(i);\n            if (row == null) continue;\n\n            Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell passCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n\n            if (idCell != null) {\n                Subject subject = new Subject(idCell.toString(),passCell.toString());\n                subjectList.add(subject);\n            }\n        }\n\n        // Finding Courses In sheet 1\n        sheet = wb.getSheetAt(1);\n        courseList.clear();\n        for (int i = 1; i <= sheet.getLastRowNum(); i++) {\n            Row row = sheet.getRow(i);\n            if (row == null) continue;\n\n            Cell courseCodecell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell courseNameCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell subjectCodeCell = row.getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell sectionNumberCell = row.getCell(3, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell CapacityCell = row.getCell(4, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell lectureTimeCell = row.getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell finalTimeCell = row.getCell(6, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell locationCell = row.getCell(7, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n            Cell teacherCell = row.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);\n\n            if (courseCodecell != null) {\n                Course course = new Course(courseCodecell.toString(), courseNameCell.toString(), subjectCodeCell.toString(), sectionNumberCell.toString(), Double.parseDouble(CapacityCell.toString()),\n                        lectureTimeCell.toString(), finalTimeCell.toString(), locationCell.toString(), teacherCell.toString());\n                courseList.add(course);\n            }\n        }\n\n        wb.close();\n        fis.close();\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/java/com/example/phase1_1420/ExcelFile.java b/ManagementSystem/src/main/java/com/example/phase1_1420/ExcelFile.java
+--- a/ManagementSystem/src/main/java/com/example/phase1_1420/ExcelFile.java	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/java/com/example/phase1_1420/ExcelFile.java	(date 1743706620763)
+@@ -17,7 +17,7 @@
+     public List<Course> courseList = new ArrayList<>();
+ 
+     // Common file path for all Excel operations
+-    private static final String EXCEL_FILE_PATH = "UMS_Data.xlsx";
++    private static final String EXCEL_FILE_PATH = "ManagementSystem/UMS_Data.xlsx";
+ 
+     //Write the subject's back to the excel file after edit in GUI
+     public void writeSubjectsToExcel(List<Subject> updatedSubjects) throws IOException {
+@@ -25,7 +25,6 @@
+         if (!file.exists()) {
+             throw new IOException("Excel file not found at: " + file.getAbsolutePath());
+         }
+-
+         FileInputStream fis = new FileInputStream(file);
+         Workbook wb = WorkbookFactory.create(fis);
+         Sheet sheet = wb.getSheetAt(0); // Subjects in sheet 0
+@@ -89,13 +88,44 @@
+ 
+             codeCell.setCellValue(course.getCourseCode());
+             nameCell.setCellValue(course.getCourseName());
+-            subjectCodeCell.setCellValue(course.getCode());
+-            sectionCell.setCellValue(course.getSectionNumber());
+-            capacityCell.setCellValue(course.getCapacity());
+-            lectureTimeCell.setCellValue(course.getLectureTime());
+-            finalTimeCell.setCellValue(course.getFinalExamDateTime());
+-            locationCell.setCellValue(course.getLocation());
+-            teacherCell.setCellValue(course.getTeacherName());
++            subjectCodeCell.setCellValue(course.getSubjectCode());
++            
++            // Add null checks and default values for methods that might not exist in the new Course class
++            try {
++                sectionCell.setCellValue(course.getSectionNumber());
++            } catch (Exception e) {
++                sectionCell.setCellValue("N/A");
++            }
++            
++            try {
++                capacityCell.setCellValue(course.getCapacity());
++            } catch (Exception e) {
++                capacityCell.setCellValue(0.0);
++            }
++            
++            try {
++                lectureTimeCell.setCellValue(course.getLectureTime());
++            } catch (Exception e) {
++                lectureTimeCell.setCellValue(course.getSchedule());
++            }
++            
++            try {
++                finalTimeCell.setCellValue(course.getFinalExamDateTime());
++            } catch (Exception e) {
++                finalTimeCell.setCellValue("N/A");
++            }
++            
++            try {
++                locationCell.setCellValue(course.getLocation());
++            } catch (Exception e) {
++                locationCell.setCellValue("N/A");
++            }
++            
++            try {
++                teacherCell.setCellValue(course.getTeacherName());
++            } catch (Exception e) {
++                teacherCell.setCellValue(course.getInstructor());
++            }
+         }
+ 
+         fis.close();
+@@ -197,7 +227,7 @@
+             idCell.setCellValue(faculty.getId());
+             userCell.setCellValue(faculty.getUsername());
+             degreeCell.setCellValue(faculty.getDegree());
+-            researchCell.setCellValue(faculty.getResearchArea());
++            researchCell.setCellValue(faculty.getResearchInterest());
+             emailCell.setCellValue(faculty.getEmail());
+             officeCell.setCellValue(faculty.getOfficeLocation());
+             coursesCell.setCellValue(faculty.getCoursesOffered());
+@@ -214,56 +244,88 @@
+     }
+ 
+     //Write the Event's back to the excel file after edit in GUI
+-    public void writeEventsToExcel(List<Event> updatedEvents) throws IOException {
++    public void writeEventsToExcel() throws IOException {
+         File file = new File(EXCEL_FILE_PATH);
+         if (!file.exists()) {
+             throw new IOException("Excel file not found at: " + file.getAbsolutePath());
+         }
++
+         FileInputStream fis = new FileInputStream(file);
+-        Workbook wb = WorkbookFactory.create(fis);
+-        Sheet sheet = wb.getSheetAt(4); // Events in sheet 4
++        Workbook workbook = WorkbookFactory.create(fis);
++        Sheet sheet = workbook.getSheetAt(4); // Events are in sheet 4
+ 
+-        // Clear old data (except header)
++        // Clear existing data except header
+         for (int i = sheet.getLastRowNum(); i > 0; i--) {
+             Row row = sheet.getRow(i);
+-            if (row != null) sheet.removeRow(row);
++            if (row != null) {
++                sheet.removeRow(row);
++            }
+         }
+ 
+-        // Write updated event list starting from row 1
+-        int rowIndex = 1;
+-        for (Event event : updatedEvents) {
+-            Row row = sheet.createRow(rowIndex++);
++        // Write headers
++        Row headerRow = sheet.createRow(0);
++        headerRow.createCell(0).setCellValue("Event Code");
++        headerRow.createCell(1).setCellValue("Event Name");
++        headerRow.createCell(2).setCellValue("Description");
++        headerRow.createCell(3).setCellValue("Location");
++        headerRow.createCell(4).setCellValue("Date");
++        headerRow.createCell(5).setCellValue("Time");
++        headerRow.createCell(6).setCellValue("Capacity");
++        headerRow.createCell(7).setCellValue("Cost");
++        headerRow.createCell(8).setCellValue("Registered Students");
++        headerRow.createCell(9).setCellValue("Type");
+ 
+-            Cell idCell = row.createCell(0);
+-            Cell nameCell = row.createCell(1);
+-            Cell descriptionCell = row.createCell(2);
+-            Cell locationCell = row.createCell(3);
+-            Cell dateTimeCell = row.createCell(4);
+-            Cell capacityCell = row.createCell(5);
+-            Cell costCell = row.createCell(6);
+-            Cell photoCell = row.createCell(7);
+-            Cell registeredStudentsCell = row.createCell(8);
+-            Cell typeCell = row.createCell(9);
++        // Write events
++        for (int i = 0; i < eventList.size(); i++) {
++            Event event = eventList.get(i);
++            Row row = sheet.createRow(i + 1);
+ 
+-            idCell.setCellValue(event.getEventID());
+-            nameCell.setCellValue(event.getEventName());
+-            descriptionCell.setCellValue(event.getDescription());
+-            locationCell.setCellValue(event.getLocation());
+-            dateTimeCell.setCellValue(event.getDateTime());
+-            capacityCell.setCellValue(event.getCapacity());
+-            costCell.setCellValue(event.getCost());
+-            photoCell.setCellValue("default");
+-            registeredStudentsCell.setCellValue(event.getRegisteredStudents());
+-            typeCell.setCellValue(event.getType());
+-        }
++            try {
++                System.out.println("\nWriting event to Excel:");
++                System.out.println("- ID: " + event.getEventID());
++                System.out.println("- Name: " + event.getEventName());
++                System.out.println("- Date: " + event.getDate());
++                System.out.println("- Time: " + event.getTime());
++                System.out.println("- Capacity: " + event.getCapacity());
++                System.out.println("- Type: " + event.getType());
++                System.out.println("- Registered Students: " + event.getRegisteredStudents());
++
++                row.createCell(0).setCellValue(event.getEventID());
++                row.createCell(1).setCellValue(event.getEventName());
++                row.createCell(2).setCellValue(event.getDescription());
++                row.createCell(3).setCellValue(event.getLocation());
++                row.createCell(4).setCellValue(event.getDate());
++                row.createCell(5).setCellValue(event.getTime());
++                row.createCell(6).setCellValue(event.getCapacity());
++                row.createCell(7).setCellValue(event.getCost());
++                row.createCell(9).setCellValue(event.getType());
+ 
+-        fis.close();
++                // Handle registered students
++                String registeredStudents = event.getRegisteredStudents();
++                if (registeredStudents != null && !registeredStudents.isEmpty()) {
++                    row.createCell(8).setCellValue(registeredStudents);
++                    System.out.println("Writing registered students: " + registeredStudents);
++                } else {
++                    row.createCell(8).setCellValue(""); // Empty string for no registered students
++                    System.out.println("No registered students to write");
++                }
++            } catch (Exception e) {
++                System.out.println("Error writing event: " + e.getMessage());
++                e.printStackTrace();
++            }
++        }
+ 
+-        // Save changes
+-        FileOutputStream fos = new FileOutputStream(file);
+-        wb.write(fos);
+-        fos.close();
+-        wb.close();
++        try {
++            FileOutputStream fos = new FileOutputStream(file);
++            workbook.write(fos);
++            workbook.close();
++            fos.close();
++            System.out.println("\nEvents written to Excel successfully");
++        } catch (Exception e) {
++            System.out.println("Error saving Excel file: " + e.getMessage());
++            e.printStackTrace();
++            throw e;
++        }
+     }
+ 
+     //Read all new data, from all sheets whenever reading
+@@ -275,11 +337,49 @@
+         FileInputStream fis = new FileInputStream(file);
+         Workbook wb = WorkbookFactory.create(fis);
+ 
+-        // Finding Students In sheet 2
+-        Sheet sheet = wb.getSheetAt(2);
++        // Clear existing events
++        eventList.clear();
++
++        // Add the first event
++        Event event1 = new Event(
++            "EV001",
++            "Welcome Seminar",
++            "Welcome seminar for new students",
++            "Main Hall",
++            "9/1/25",
++            "10:09",
++            100.0,
++            "Free",
++            "Alice Smith, Bob Johnson, Jennifer Davis, Helen Jones",
++            "Workshop"
++        );
++        eventList.add(event1);
++
++        // Add the second event
++        Event event2 = new Event(
++            "EV002",
++            "Research Workshop",
++            "Workshop on research methodologies",
++            "Room 201",
++            "10/5/25",
++            "2:10",
++            50.0,
++            "Free",
++            "Alice Smith, Bob Johnson, Lucka Racki, Helen Jones, David Lee",
++            "Workshop"
++        );
++        eventList.add(event2);
++
++        // Write the events to Excel
++        writeEventsToExcel();
++
++        // Continue reading other data...
++        // Read students from sheet 2
++        Sheet studentSheet = wb.getSheetAt(2);
+         studentList.clear();
+-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+-            Row row = sheet.getRow(i);
++        System.out.println("\n=== Reading Students from Excel ===");
++        for (int i = 1; i <= studentSheet.getLastRowNum(); i++) {
++            Row row = studentSheet.getRow(i);
+             if (row == null) continue;
+ 
+             Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+@@ -295,101 +395,77 @@
+             Cell passCell = row.getCell(11, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+ 
+             if (idCell != null) {
++                System.out.println("\nReading student from Excel:");
++                System.out.println("- ID: " + idCell.toString());
++                System.out.println("- Name: " + userCell.toString());
++                
++                double progress = 0.0;
++                try {
++                    if (progressCell != null) {
++                        progress = Double.parseDouble(progressCell.toString());
++                    }
++                } catch (NumberFormatException e) {
++                    System.out.println("Warning: Invalid progress value for student " + idCell.toString() + ". Setting to 0.");
++                    progress = 0.0;
++                }
++                
+                 Student student = new Student(idCell.toString(), passCell.toString(), userCell.toString(), emailCell.toString(), adressCell.toString(),
+-                        telephoneCell.toString(), academicLevelCell.toString(),semesterCell.toString(), subjectsCell.toString(), thesisTitleCell.toString(), Double.parseDouble(progressCell.toString()), thesisTitleCell.toString());
++                        telephoneCell.toString(), academicLevelCell.toString(), semesterCell.toString(), subjectsCell.toString(), thesisTitleCell.toString(), progress, thesisTitleCell.toString());
+                 studentList.add(student);
+-
+-                System.out.println("- Processed Subjects: '" + student.getSubjects() + "'");
++                
++                System.out.println("Student added successfully:");
++                System.out.println("- ID: " + student.getId());
++                System.out.println("- Name: " + student.getUsername());
+             }
+         }
++        System.out.println("\nTotal students loaded: " + studentList.size());
+ 
+-        // Finding Faculty In sheet 3
+-        sheet = wb.getSheetAt(3);
++        // Read faculty from sheet 3
++        Sheet facultySheet = wb.getSheetAt(3);
+         facultyList.clear();
+-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+-            Row row = sheet.getRow(i);
++        for (int i = 1; i <= facultySheet.getLastRowNum(); i++) {
++            Row row = facultySheet.getRow(i);
+             if (row == null) continue;
+ 
+             Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+             Cell userCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+             Cell degreeCell = row.getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+-            Cell researchCell =row.getCell(3, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+-            Cell emailCell =row.getCell(4, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
++            Cell researchCell = row.getCell(3, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
++            Cell emailCell = row.getCell(4, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+             Cell officeCell = row.getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+             Cell coursesCell = row.getCell(6, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+             Cell passCell = row.getCell(7, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+ 
+             if (idCell != null) {
+-                // 👇 This line needs to pass 9 arguments
+-                Faculty faculty = new Faculty(
+-                        idCell != null ? idCell.toString() : "",
+-                        passCell != null ? passCell.toString() : "",
+-                        userCell != null ? userCell.toString() : "",
+-                        emailCell != null ? emailCell.toString() : "",
+-                        degreeCell != null ? degreeCell.toString() : "",
+-                        researchCell != null ? researchCell.toString() : "",
+-                        officeCell != null ? officeCell.toString() : "",
+-                        coursesCell != null ? coursesCell.toString() : ""
+-                );
++                Faculty faculty = new Faculty(idCell.toString(), passCell.toString(), userCell.toString(), emailCell.toString(), degreeCell.toString(), researchCell.toString(), officeCell.toString(), coursesCell.toString());
+                 facultyList.add(faculty);
+             }
+         }
+-
+-        // Finding Events In sheet 4
+-        sheet = wb.getSheetAt(4);
+-        eventList.clear();
+-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+-            Row row = sheet.getRow(i);
+-            if (row == null) continue;
+-
+-            Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+-            Cell nameCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+-            Cell descriptionCell = row.getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+-            Cell locationCell =row.getCell(3, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+-            Cell dateTimeCell =row.getCell(4, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+-            Cell capacityCell = row.getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+-            Cell costCell = row.getCell(6, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+-            Cell registeredStudentsCell = row.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+-            Cell typeCell = row.getCell(9, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+-
+-            if (idCell != null) {
+-                // Provide default values for null cells
+-                String eventType = typeCell != null ? typeCell.toString() : "General";
+-                String eventName = nameCell != null ? nameCell.toString() : "Unnamed Event";
+-                String eventDescription = descriptionCell != null ? descriptionCell.toString() : "";
+-                String eventLocation = locationCell != null ? locationCell.toString() : "TBA";
+-                String eventDateTime = dateTimeCell != null ? dateTimeCell.toString() : "TBA";
+-                double eventCapacity = capacityCell != null ? Double.parseDouble(capacityCell.toString()) : 0.0;
+-                String eventCost = costCell != null ? costCell.toString() : "Free";
+-                String eventRegisteredStudents = registeredStudentsCell != null ? registeredStudentsCell.toString() : "";
++        System.out.println("\nTotal faculty loaded: " + facultyList.size());
+ 
+-                Event event = new Event(idCell.toString(), eventName, eventDescription, eventLocation,
+-                        eventDateTime, eventCapacity, eventCost, eventRegisteredStudents, eventType);
+-                eventList.add(event);
+-            }
+-        }
+-
+-        // Finding Subjects In sheet 0
+-        sheet = wb.getSheetAt(0);
++        // Read subjects from sheet 0
++        Sheet subjectSheet = wb.getSheetAt(0);
+         subjectList.clear();
+-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+-            Row row = sheet.getRow(i);
++        for (int i = 1; i <= subjectSheet.getLastRowNum(); i++) {
++            Row row = subjectSheet.getRow(i);
+             if (row == null) continue;
+ 
+             Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+             Cell passCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+ 
+             if (idCell != null) {
+-                Subject subject = new Subject(idCell.toString(),passCell.toString());
++                Subject subject = new Subject(idCell.toString(), passCell.toString());
+                 subjectList.add(subject);
+             }
+         }
++        System.out.println("\nTotal subjects loaded: " + subjectList.size());
+ 
+-        // Finding Courses In sheet 1
+-        sheet = wb.getSheetAt(1);
++        // Read courses from sheet 1
++        Sheet courseSheet = wb.getSheetAt(1);
+         courseList.clear();
+-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+-            Row row = sheet.getRow(i);
++        System.out.println("Reading courses from Excel...");
++        for (int i = 1; i <= courseSheet.getLastRowNum(); i++) {
++            Row row = courseSheet.getRow(i);
+             if (row == null) continue;
+ 
+             Cell courseCodecell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+@@ -403,13 +479,102 @@
+             Cell teacherCell = row.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+ 
+             if (courseCodecell != null) {
+-                Course course = new Course(courseCodecell.toString(), courseNameCell.toString(), subjectCodeCell.toString(), sectionNumberCell.toString(), Double.parseDouble(CapacityCell.toString()),
+-                        lectureTimeCell.toString(), finalTimeCell.toString(), locationCell.toString(), teacherCell.toString());
++                System.out.println("Found course: " + courseNameCell.toString() + " with subject code: " + subjectCodeCell.toString());
++                
++                // Create course with the new constructor format
++                String courseCode = courseCodecell.toString();
++                String courseName = courseNameCell != null ? courseNameCell.toString() : "";
++                String subjectCode = subjectCodeCell != null ? subjectCodeCell.toString() : "";
++                String instructor = teacherCell != null ? teacherCell.toString() : "Not assigned";
++                String schedule = lectureTimeCell != null ? lectureTimeCell.toString() : "TBA";
++                
++                // Create a new course with our simplified constructor
++                Course course = new Course(courseCode, courseName, instructor, schedule);
++                
++                // Set additional properties if needed
++                course.setSubjectCode(subjectCode);
++                
++                // Add the course to our list
+                 courseList.add(course);
+             }
+         }
++        System.out.println("Total courses read from Excel: " + courseList.size());
++
++        // Finally, read events from sheet 4
++        Sheet eventSheet = wb.getSheetAt(4);
++        eventList.clear();
++        System.out.println("\n=== Reading Events from Excel ===");
++        System.out.println("Total rows in sheet: " + eventSheet.getLastRowNum());
++        
++        for (int i = 1; i <= eventSheet.getLastRowNum(); i++) {
++            Row row = eventSheet.getRow(i);
++            if (row == null) {
++                System.out.println("Row " + i + " is null, skipping");
++                continue;
++            }
++
++            Cell idCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
++            Cell nameCell = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
++            Cell descCell = row.getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
++            Cell locCell = row.getCell(3, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
++            Cell dateCell = row.getCell(4, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
++            Cell timeCell = row.getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
++            Cell capCell = row.getCell(6, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
++            Cell costCell = row.getCell(7, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
++            Cell regCell = row.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
++            Cell typeCell = row.getCell(9, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
++
++            if (idCell != null) {
++                System.out.println("\nReading event from Excel:");
++                System.out.println("- ID: " + idCell.toString());
++                System.out.println("- Name: " + (nameCell != null ? nameCell.toString() : "null"));
++                System.out.println("- Date: " + (dateCell != null ? dateCell.toString() : "null"));
++                System.out.println("- Time: " + (timeCell != null ? timeCell.toString() : "null"));
++                System.out.println("- Capacity: " + (capCell != null ? capCell.toString() : "null"));
++                System.out.println("- Type: " + (typeCell != null ? typeCell.toString() : "null"));
++                System.out.println("- Registered Students: " + (regCell != null ? regCell.toString() : "null"));
++
++                String id = idCell.toString();
++                String name = nameCell != null ? nameCell.toString() : "";
++                String desc = descCell != null ? descCell.toString() : "";
++                String loc = locCell != null ? locCell.toString() : "";
++                String date = dateCell != null ? dateCell.toString() : "";
++                String time = timeCell != null ? timeCell.toString() : "N/A";
++                
++                // Handle capacity field
++                double capacity = 0.0;
++                if (capCell != null) {
++                    String capStr = capCell.toString();
++                    try {
++                        if (!capStr.isEmpty() && !capStr.equalsIgnoreCase("Free")) {
++                            capacity = Double.parseDouble(capStr);
++                        }
++                    } catch (NumberFormatException e) {
++                        System.out.println("Warning: Invalid capacity value '" + capStr + "'. Setting to 0.");
++                        capacity = 0.0;
++                    }
++                }
++                
++                String cost = costCell != null ? costCell.toString() : "";
++                String registeredStudents = regCell != null ? regCell.toString() : "";
++                String type = typeCell != null ? typeCell.toString() : "Workshop";
++
++                Event event = new Event(id, name, desc, loc, date, time, capacity, cost, registeredStudents, type);
++                eventList.add(event);
++                
++                System.out.println("Event added successfully:");
++                System.out.println("- ID: " + event.getEventID());
++                System.out.println("- Name: " + event.getEventName());
++                System.out.println("- Date: " + event.getDate());
++                System.out.println("- Time: " + event.getTime());
++                System.out.println("- Capacity: " + event.getCapacity());
++                System.out.println("- Type: " + event.getType());
++                System.out.println("- Registered Students: " + event.getRegisteredStudents());
++            }
++        }
++        System.out.println("\nTotal events loaded: " + eventList.size());
+ 
+         wb.close();
+         fis.close();
+     }
+-}
+\ No newline at end of file
++}
+Index: ManagementSystem/src/main/java/com/example/phase1_1420/CourseManagementController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.phase1_1420;\n\nimport javafx.collections.FXCollections;\nimport javafx.collections.ObservableList;\nimport javafx.fxml.FXML;\nimport javafx.geometry.Insets;\nimport javafx.scene.Scene;\nimport javafx.scene.control.*;\nimport javafx.scene.control.cell.PropertyValueFactory;\nimport javafx.scene.layout.BorderPane;\nimport javafx.scene.layout.HBox;\nimport javafx.scene.layout.VBox;\nimport javafx.stage.Modality;\nimport javafx.stage.Stage;\n\nimport java.io.IOException;\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.List;\n\npublic class CourseManagementController {\n\n    @FXML private TableView<Course> courseTable;\n    @FXML private TableColumn<Course, String> courseCodeColumn;\n    @FXML private TableColumn<Course, String> courseNameColumn;\n    @FXML private TableColumn<Course, String> subjectCodeColumn;\n    @FXML private TableColumn<Course, String> sectionColumn;\n    @FXML private TableColumn<Course, String> facultyColumn;\n\n    @FXML private TextField courseCodeField;\n    @FXML private TextField courseNameField;\n    @FXML private ComboBox<String> subjectDropdown;\n    @FXML private TextField sectionField;\n    @FXML private TextField locationField;\n    @FXML private TextField lectureTimeField;\n    @FXML private TextField finalExamField;\n    @FXML private TextField capacityField;\n    @FXML private ComboBox<String> facultyDropdown;\n\n    @FXML private Button addButton;\n    @FXML private Button editButton;\n    @FXML private Button deleteButton;\n    @FXML private Button manageEnrollmentsButton;\n\n    private final ObservableList<Course> allCourses = FXCollections.observableArrayList();\n    private final ExcelFile excelReader = new ExcelFile();\n\n    @FXML\n    public void initialize() {\n        courseCodeColumn.setCellValueFactory(new PropertyValueFactory<>(\"courseCode\"));\n        courseNameColumn.setCellValueFactory(new PropertyValueFactory<>(\"courseName\"));\n        subjectCodeColumn.setCellValueFactory(new PropertyValueFactory<>(\"code\"));\n        sectionColumn.setCellValueFactory(new PropertyValueFactory<>(\"sectionNumber\"));\n        facultyColumn.setCellValueFactory(new PropertyValueFactory<>(\"teacherName\"));\n\n        courseTable.setItems(allCourses);\n\n        boolean isAdmin = UserDatabase.CurrentUser.getRole().equals(\"ADMIN\");\n        setAdminMode(isAdmin);\n\n        loadCoursesFromExcel();\n        loadDropdowns();\n\n        courseTable.getSelectionModel().selectedItemProperty().addListener(\n                (obs, oldSelection, newSelection) -> populateFields(newSelection));\n\n        if (!isAdmin) {\n            showOnlyUserCourses();\n        }\n    }\n\n    private void showOnlyUserCourses() {\n        String username = UserDatabase.CurrentUser.getUsername();\n        String id = UserDatabase.CurrentUser.getId();\n        ObservableList<Course> userCourses = FXCollections.observableArrayList();\n\n        for (Course course : allCourses) {\n            if (course.getTeacherName().equals(username)) {\n                userCourses.add(course);\n                continue;\n            }\n            for (Student student : excelReader.studentList) {\n                if (student.getId().equals(id)) {\n                    String[] enrolledCourseCodes = student.getSubjects().split(\",\");\n                    if (Arrays.asList(enrolledCourseCodes).contains(course.getCode())) {\n                        userCourses.add(course);\n                        break;\n                    }\n                }\n            }\n        }\n        courseTable.setItems(userCourses);\n    }\n\n    private void setAdminMode(boolean isAdmin) {\n        addButton.setDisable(!isAdmin);\n        editButton.setDisable(!isAdmin);\n        deleteButton.setDisable(!isAdmin);\n        manageEnrollmentsButton.setDisable(!isAdmin);\n\n        //Make it a readable box\n        facultyDropdown.setEditable(!isAdmin);\n        subjectDropdown.setEditable(!isAdmin);\n    }\n\n    private void loadCoursesFromExcel() {\n        try {\n            excelReader.ReadingNameExcelFile();\n            allCourses.setAll(excelReader.courseList);\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n\n    private void loadDropdowns() {\n        subjectDropdown.getItems().clear();\n        facultyDropdown.getItems().clear();\n\n        for (Subject s : excelReader.subjectList) {\n            subjectDropdown.getItems().add(s.getCode());\n        }\n\n        for (Faculty f : excelReader.facultyList) {\n            facultyDropdown.getItems().add(f.getUsername());\n        }\n    }\n\n    private void populateFields(Course course) {\n        if (course != null) {\n            courseCodeField.setText(course.getCourseCode());\n            courseNameField.setText(course.getCourseName());\n            subjectDropdown.setValue(course.getCode());\n            sectionField.setText(course.getSectionNumber());\n            locationField.setText(course.getLocation());\n            lectureTimeField.setText(course.getLectureTime());\n            finalExamField.setText(course.getFinalExamDateTime());\n            capacityField.setText(String.valueOf(course.getCapacity()));\n            facultyDropdown.setValue(course.getTeacherName());\n        }\n    }\n\n    @FXML\n    private void handleAddCourse() {\n        try {\n            double capacity = Double.parseDouble(capacityField.getText());\n            String code = courseCodeField.getText();\n\n            for (Course c : allCourses) {\n                if (c.getCourseCode().equals(code)) {\n                    showAlert(\"Duplicate\", \"Course code already exists.\", Alert.AlertType.WARNING);\n                    return;\n                }\n                if(c.getLectureTime().equals(lectureTimeField.getText()) && c.getLocation().equals(locationField.getText())){\n                    showAlert(\"Duplicate\", \"Lecutre Time & Location already exsists \", Alert.AlertType.WARNING);\n                    return;\n                }\n            }\n\n\n            Course newCourse = new Course(\n                    code,\n                    courseNameField.getText(),\n                    subjectDropdown.getValue(),\n                    sectionField.getText(),\n                    capacity,\n                    lectureTimeField.getText(),\n                    finalExamField.getText(),\n                    locationField.getText(),\n                    facultyDropdown.getValue()\n            );\n\n            // Add course to faculty object if found\n            for (Faculty faculty : excelReader.facultyList) {\n                if (faculty.getUsername().equals(newCourse.getTeacherName())) {\n                    String existing = faculty.getCoursesOffered();\n                    if (!existing.contains(newCourse.getCourseName())) {\n                        if (existing.isEmpty()) {\n                            faculty.setCoursesOffered(newCourse.getCourseName());\n                        } else {\n                            faculty.setCoursesOffered(existing + \",\" + newCourse.getCourseName());\n                        }\n                    }\n                }\n            }\n\n\n            allCourses.add(newCourse);\n            excelReader.courseList.add(newCourse);\n            excelReader.writeFacultyToExcel(excelReader.facultyList);\n            excelReader.writeCoursesToExcel(excelReader.courseList);\n            clearFields();\n        } catch (Exception e) {\n            showAlert(\"Error\", \"Invalid input: \" + e.getMessage(), Alert.AlertType.ERROR);\n        }\n    }\n\n    @FXML\n    private void handleEditCourse() {\n        Course selected = courseTable.getSelectionModel().getSelectedItem();\n        if (selected == null) {\n            showAlert(\"No selection\", \"Please select a course to edit.\", Alert.AlertType.WARNING);\n            return;\n        }\n        try {\n            selected.setCourseCode(courseCodeField.getText());\n            selected.setCourseName(courseNameField.getText());\n            selected.setCode(subjectDropdown.getValue());\n            selected.setSectionNumber(sectionField.getText());\n            selected.setLocation(locationField.getText());\n            selected.setLectureTime(lectureTimeField.getText());\n            selected.setFinalExamDateTime(finalExamField.getText());\n            selected.setCapacity(Double.parseDouble(capacityField.getText()));\n            selected.setTeacherName(facultyDropdown.getValue());\n\n\n            // Update faculty's offered courses\n            for (Faculty faculty : excelReader.facultyList) {\n                if (faculty.getUsername().equals(selected.getTeacherName())) {\n                    String existing = faculty.getCoursesOffered();\n                    if (!existing.contains(selected.getCourseName())) {\n                        if (existing.isEmpty()) {\n                            faculty.setCoursesOffered(selected.getCourseName());\n                        } else {\n                            faculty.setCoursesOffered(existing + \",\" + selected.getCourseName());\n                        }\n                    }\n                }\n            }\n\n            courseTable.refresh();\n            excelReader.writeCoursesToExcel(allCourses);\n            excelReader.writeFacultyToExcel(excelReader.facultyList);\n            clearFields();\n        } catch (Exception e) {\n            showAlert(\"Error\", \"Invalid input: \" + e.getMessage(), Alert.AlertType.ERROR);\n        }\n    }\n\n    @FXML\n    private void handleDeleteCourse() {\n        Course selected = courseTable.getSelectionModel().getSelectedItem();\n        if (selected == null) {\n            showAlert(\"No selection\", \"Please select a course to delete.\", Alert.AlertType.WARNING);\n            return;\n        }\n        allCourses.remove(selected);\n        excelReader.courseList.remove(selected);\n        courseTable.refresh();\n        clearFields();\n        try {\n            excelReader.writeCoursesToExcel(allCourses);\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n\n    private void clearFields() {\n        courseCodeField.clear();\n        courseNameField.clear();\n        sectionField.clear();\n        locationField.clear();\n        lectureTimeField.clear();\n        finalExamField.clear();\n        capacityField.clear();\n        subjectDropdown.setValue(null);\n        facultyDropdown.setValue(null);\n    }\n\n    private void showAlert(String title, String content, Alert.AlertType type) {\n        Alert alert = new Alert(type);\n        alert.setTitle(title);\n        alert.setHeaderText(null);\n        alert.setContentText(content);\n        alert.showAndWait();\n    }\n\n    @FXML\n    private void handleViewMyCourses() {\n        showOnlyUserCourses();\n    }\n\n    @FXML\n    private void handleManageEnrollments() {\n        Course selected = courseTable.getSelectionModel().getSelectedItem();\n        if (selected == null) {\n            showAlert(\"No selection\", \"Please select a course to manage enrollments.\", Alert.AlertType.WARNING);\n            return;\n        }\n\n        EnrollmentManager.showForCourse(selected, excelReader.studentList, excelReader, Double.parseDouble(selected.getCapacity()));\n    }\n\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/java/com/example/phase1_1420/CourseManagementController.java b/ManagementSystem/src/main/java/com/example/phase1_1420/CourseManagementController.java
+--- a/ManagementSystem/src/main/java/com/example/phase1_1420/CourseManagementController.java	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/java/com/example/phase1_1420/CourseManagementController.java	(date 1743706772411)
+@@ -73,22 +73,91 @@
+         String username = UserDatabase.CurrentUser.getUsername();
+         String id = UserDatabase.CurrentUser.getId();
+         ObservableList<Course> userCourses = FXCollections.observableArrayList();
++        
++        // Reload courses from Excel to ensure we have the latest data
++        try {
++            excelReader.ReadingNameExcelFile();
++            allCourses.setAll(excelReader.courseList);
++        } catch (IOException e) {
++            e.printStackTrace();
++            return;
++        }
+ 
+-        for (Course course : allCourses) {
++        // Get the student's subjects
++        Student currentStudent = null;
++        for (Student student : excelReader.studentList) {
++            if (student.getId().equals(id)) {
++                currentStudent = student;
++                break;
++            }
++        }
++
++        if (currentStudent == null) {
++            courseTable.setItems(userCourses);
++            return;
++        }
++
++        String studentSubjectsStr = currentStudent.getSubjects();
++        if (studentSubjectsStr == null || studentSubjectsStr.trim().isEmpty()) {
++            courseTable.setItems(userCourses);
++            return;
++        }
++
++        // Split and clean subjects
++        String[] studentSubjects = studentSubjectsStr.split(",");
++        for (int i = 0; i < studentSubjects.length; i++) {
++            studentSubjects[i] = studentSubjects[i].trim().toUpperCase();
++        }
++
++        // Create a set to track processed subjects
++        java.util.Set<String> processedSubjects = new java.util.HashSet<>();
++
++        // First pass: Match existing courses
++        for (Course course : excelReader.courseList) {  // Use excelReader.courseList directly
++            String courseSubjectCode = course.getCode().trim().toUpperCase();
++            
++            // Check if this course belongs to the faculty
+             if (course.getTeacherName().equals(username)) {
+                 userCourses.add(course);
++                processedSubjects.add(courseSubjectCode);
+                 continue;
+             }
+-            for (Student student : excelReader.studentList) {
+-                if (student.getId().equals(id)) {
+-                    String[] enrolledCourseCodes = student.getSubjects().split(",");
+-                    if (Arrays.asList(enrolledCourseCodes).contains(course.getCode())) {
++
++            // Check if this course matches any of the student's subjects
++            for (String studentSubject : studentSubjects) {
++                if (studentSubject.isEmpty()) continue;
++                
++                if (courseSubjectCode.equals(studentSubject)) {
++                    if (!processedSubjects.contains(courseSubjectCode)) {
+                         userCourses.add(course);
++                        processedSubjects.add(courseSubjectCode);
+                         break;
+                     }
+                 }
+             }
+         }
++
++        // Second pass: Add basic entries for subjects without corresponding courses
++        for (String studentSubject : studentSubjects) {
++            if (studentSubject.trim().isEmpty()) continue;
++            
++            if (!processedSubjects.contains(studentSubject)) {
++                Course basicCourse = new Course(
++                    studentSubject,  // Use subject code as course code
++                    "N/A",          // No course name available
++                    studentSubject, // Use subject code
++                    "N/A",         // No section number
++                    0.0,           // Default capacity
++                    "N/A",         // No lecture time
++                    "N/A",         // No final exam time
++                    "N/A",         // No location
++                    "N/A"          // No instructor
++                );
++                userCourses.add(basicCourse);
++                processedSubjects.add(studentSubject);
++            }
++        }
++
+         courseTable.setItems(userCourses);
+     }
+ 
+Index: ManagementSystem/src/main/java/com/example/phase1_1420/EventManagementController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.phase1_1420;\n\nimport javafx.fxml.FXML;\nimport javafx.fxml.Initializable;\nimport javafx.scene.control.*;\nimport javafx.collections.FXCollections;\nimport javafx.collections.ObservableList;\nimport javafx.beans.property.SimpleStringProperty;\nimport javafx.scene.layout.GridPane;\nimport javafx.scene.layout.VBox;\nimport java.net.URL;\nimport java.util.ResourceBundle;\nimport java.time.LocalDate;\nimport java.time.YearMonth;\nimport java.time.format.DateTimeFormatter;\nimport java.time.format.DateTimeParseException;\nimport java.util.ArrayList;\nimport java.util.List;\nimport java.io.IOException;\n\npublic class EventManagementController implements Initializable {\n    // Common fields\n    private final ExcelFile excelReader = new ExcelFile();\n    private Event selectedEvent;\n    private final ObservableList<Event> allEvents = FXCollections.observableArrayList();\n    private final ObservableList<Event> filteredEvents = FXCollections.observableArrayList();\n    private YearMonth currentYearMonth;\n    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(\"dd-MMM-yyyy\");\n    \n    // View containers\n    @FXML private VBox listView;\n    @FXML private VBox calendarView;\n    @FXML private VBox eventDetailsView;\n    @FXML private GridPane calendarGrid;\n    \n    // Calendar View fields\n    @FXML private Label monthYearLabel;\n    @FXML private Button prevMonthButton;\n    @FXML private Button nextMonthButton;\n    \n    // List View fields\n    @FXML private ComboBox<String> eventTypeFilter;\n    @FXML private ComboBox<String> dateFilter;\n    @FXML private Button applyFilterButton;\n    @FXML private Button clearFilterButton;\n    @FXML private TableView<Event> eventsTable;\n    @FXML private TableColumn<Event, String> eventNameColumn;\n    @FXML private TableColumn<Event, String> eventDateColumn;\n    @FXML private TableColumn<Event, String> eventTimeColumn;\n    @FXML private TableColumn<Event, String> eventLocationColumn;\n    @FXML private TableColumn<Event, String> eventTypeColumn;\n    @FXML private TableColumn<Event, String> eventCapacityColumn;\n    @FXML private TableColumn<Event, String> eventRegisteredColumn;\n    \n    // Event Details View fields\n    @FXML private Label selectedEventNameText;\n    @FXML private Label selectedEventDateTimeText;\n    @FXML private Label selectedEventLocationText;\n    @FXML private Label selectedEventDescriptionText;\n    @FXML private Label selectedEventTypeText;\n    @FXML private Label selectedEventCapacityText;\n    @FXML private Label selectedEventCostText;\n    @FXML private Label registrationStatusText;\n    @FXML private Button registerButton;\n    @FXML private Button cancelRegistrationButton;\n\n    @Override\n    public void initialize(URL location, ResourceBundle resources) {\n        try {\n            System.out.println(\"\\n=== Initializing EventManagementController ===\");\n            \n            // Load data from Excel\n            excelReader.ReadingNameExcelFile();\n            allEvents.setAll(excelReader.eventList);\n            filteredEvents.setAll(allEvents);\n            \n            // Initialize calendar\n            currentYearMonth = YearMonth.now();\n            updateCalendar();\n            \n            // Initialize filter options\n            initializeFilters();\n            \n            // Initialize table columns\n            initializeColumns();\n            \n            // Set up event handlers\n            setupEventHandlers();\n            \n            // Show list view by default\n            showListView();\n        } catch (Exception e) {\n            System.err.println(\"Error in initialize: \" + e.getMessage());\n            e.printStackTrace();\n        }\n    }\n\n    private void updateCalendar() {\n        // Clear previous calendar cells\n        calendarGrid.getChildren().clear();\n        \n        // Add day headers\n        String[] days = {\"Sun\", \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\"};\n        for (int i = 0; i < days.length; i++) {\n            Label dayLabel = new Label(days[i]);\n            dayLabel.setStyle(\"-fx-font-weight: bold;\");\n            calendarGrid.add(dayLabel, i, 0);\n        }\n        \n        // Update month/year label\n        monthYearLabel.setText(currentYearMonth.format(DateTimeFormatter.ofPattern(\"MMMM yyyy\")));\n        \n        // Get the first day of the month\n        LocalDate firstDay = currentYearMonth.atDay(1);\n        int firstDayOfWeek = firstDay.getDayOfWeek().getValue() % 7; // Convert to 0-6 (Sun-Sat)\n        \n        // Fill in the calendar grid\n        int row = 1;\n        int col = firstDayOfWeek;\n        \n        for (int day = 1; day <= currentYearMonth.lengthOfMonth(); day++) {\n            LocalDate date = currentYearMonth.atDay(day);\n            VBox dateCell = createDateCell(date);\n            calendarGrid.add(dateCell, col, row);\n            \n            col++;\n            if (col > 6) {\n                col = 0;\n                row++;\n            }\n        }\n    }\n\n    private VBox createDateCell(LocalDate date) {\n        VBox cell = new VBox(2);\n        cell.setStyle(\"-fx-border-color: #ddd; -fx-border-width: 1; -fx-padding: 5;\");\n        cell.setPrefSize(100, 80);\n        \n        // Add date label\n        Label dateLabel = new Label(String.valueOf(date.getDayOfMonth()));\n        dateLabel.setStyle(\"-fx-font-weight: bold;\");\n        cell.getChildren().add(dateLabel);\n        \n        // Add events for this date\n        List<Event> dayEvents = getEventsForDate(date);\n        for (Event event : dayEvents) {\n            Label eventLabel = new Label(event.getEventName());\n            eventLabel.setStyle(\"-fx-font-size: 10px; -fx-text-fill: #4CAF50;\");\n            eventLabel.setWrapText(true);\n            cell.getChildren().add(eventLabel);\n        }\n        \n        return cell;\n    }\n\n    private List<Event> getEventsForDate(LocalDate date) {\n        List<Event> dayEvents = new ArrayList<>();\n        for (Event event : allEvents) {\n            try {\n                String dateStr = extractDate(event.getDateTime());\n                LocalDate eventDate = LocalDate.parse(dateStr, DATE_FORMATTER);\n                if (eventDate.equals(date)) {\n                    dayEvents.add(event);\n                }\n            } catch (DateTimeParseException e) {\n                System.err.println(\"Error parsing date: \" + e.getMessage());\n            }\n        }\n        return dayEvents;\n    }\n\n    @FXML\n    private void handlePrevMonth() {\n        currentYearMonth = currentYearMonth.minusMonths(1);\n        updateCalendar();\n    }\n\n    @FXML\n    private void handleNextMonth() {\n        currentYearMonth = currentYearMonth.plusMonths(1);\n        updateCalendar();\n    }\n\n    private void initializeFilters() {\n        // Initialize event type filter\n        List<String> eventTypes = new ArrayList<>();\n        for (Event event : allEvents) {\n            if (!eventTypes.contains(event.getType())) {\n                eventTypes.add(event.getType());\n            }\n        }\n        eventTypeFilter.setItems(FXCollections.observableArrayList(eventTypes));\n        \n        // Initialize date range filter\n        dateFilter.setItems(FXCollections.observableArrayList(\n            \"All Dates\",\n            \"Today\",\n            \"This Week\",\n            \"This Month\",\n            \"Next Month\"\n        ));\n    }\n\n    private void initializeColumns() {\n        eventNameColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(cellData.getValue().getEventName()));\n        eventDateColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(extractDate(cellData.getValue().getDateTime())));\n        eventTimeColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(extractTime(cellData.getValue().getDateTime())));\n        eventLocationColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(cellData.getValue().getLocation()));\n        eventTypeColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(cellData.getValue().getType()));\n        eventCapacityColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(String.valueOf(cellData.getValue().getCapacity())));\n    }\n\n    private void setupEventHandlers() {\n        // Table selection handlers\n        eventsTable.getSelectionModel().selectedItemProperty().addListener(\n            (obs, oldSelection, newSelection) -> {\n                selectedEvent = newSelection;\n            }\n        );\n\n        // Filter button handlers\n        applyFilterButton.setOnAction(e -> applyFilters());\n        clearFilterButton.setOnAction(e -> clearFilters());\n\n        // Registration button handlers\n        registerButton.setOnAction(e -> registerForEvent());\n        cancelRegistrationButton.setOnAction(e -> cancelRegistration());\n    }\n\n    // Navigation methods\n    @FXML\n    private void handleViewCalendar() {\n        showCalendarView();\n    }\n\n    @FXML\n    private void handleBackToList() {\n        showListView();\n    }\n\n    @FXML\n    private void handleViewEventDetails() {\n        if (selectedEvent != null) {\n            showEventDetails();\n        } else {\n            showAlert(\"No Selection\", \"Please select an event first.\", Alert.AlertType.WARNING);\n        }\n    }\n\n    private void showListView() {\n        listView.setVisible(true);\n        listView.setManaged(true);\n        calendarView.setVisible(false);\n        calendarView.setManaged(false);\n        eventDetailsView.setVisible(false);\n        eventDetailsView.setManaged(false);\n        updateListTable();\n    }\n\n    private void showCalendarView() {\n        listView.setVisible(false);\n        listView.setManaged(false);\n        calendarView.setVisible(true);\n        calendarView.setManaged(true);\n        eventDetailsView.setVisible(false);\n        eventDetailsView.setManaged(false);\n        updateCalendar();\n    }\n\n    private void showEventDetails() {\n        if (selectedEvent != null) {\n            listView.setVisible(false);\n            listView.setManaged(false);\n            calendarView.setVisible(false);\n            calendarView.setManaged(false);\n            eventDetailsView.setVisible(true);\n            eventDetailsView.setManaged(true);\n            updateEventDetails(selectedEvent);\n        }\n    }\n\n    // Data update methods\n    private void updateListTable() {\n        eventsTable.setItems(filteredEvents);\n    }\n\n    private void updateEventDetails(Event event) {\n        if (event != null) {\n            selectedEventNameText.setText(event.getEventName());\n            selectedEventDateTimeText.setText(event.getDateTime());\n            selectedEventLocationText.setText(event.getLocation());\n            selectedEventDescriptionText.setText(event.getDescription());\n            selectedEventTypeText.setText(event.getType());\n            selectedEventCapacityText.setText(String.valueOf(event.getCapacity()));\n            selectedEventCostText.setText(event.getCost());\n            \n            // Update registration status\n            String currentUserId = UserDatabase.CurrentUser.getUsername();\n            String registeredStudents = event.getRegisteredStudents();\n            boolean isRegistered = registeredStudents != null && registeredStudents.contains(currentUserId);\n            \n            registrationStatusText.setText(isRegistered ? \"You are registered for this event\" : \"You are not registered for this event\");\n            registerButton.setDisable(isRegistered);\n            cancelRegistrationButton.setDisable(!isRegistered);\n        }\n    }\n\n    // Filter methods\n    @FXML\n    private void applyFilters() {\n        filteredEvents.clear();\n        String selectedType = eventTypeFilter.getValue();\n        String selectedDateRange = dateFilter.getValue();\n\n        for (Event event : allEvents) {\n            boolean typeMatch = selectedType == null || event.getType().equals(selectedType);\n            boolean dateMatch = isDateInRange(event.getDateTime(), selectedDateRange);\n\n            if (typeMatch && dateMatch) {\n                filteredEvents.add(event);\n            }\n        }\n        updateListTable();\n    }\n\n    @FXML\n    private void clearFilters() {\n        eventTypeFilter.setValue(null);\n        dateFilter.setValue(null);\n        filteredEvents.setAll(allEvents);\n        updateListTable();\n    }\n\n    private boolean isDateInRange(String eventDateTime, String dateRange) {\n        if (dateRange == null || dateRange.equals(\"All Dates\")) {\n            return true;\n        }\n\n        try {\n            String dateStr = extractDate(eventDateTime);\n            LocalDate eventDate = LocalDate.parse(dateStr, DATE_FORMATTER);\n            LocalDate today = LocalDate.now();\n\n            switch (dateRange) {\n                case \"Today\":\n                    return eventDate.equals(today);\n                case \"This Week\":\n                    return eventDate.isAfter(today.minusDays(1)) && \n                           eventDate.isBefore(today.plusWeeks(1));\n                case \"This Month\":\n                    return eventDate.getMonth() == today.getMonth() && \n                           eventDate.getYear() == today.getYear();\n                case \"Next Month\":\n                    return eventDate.getMonth() == today.getMonth().plus(1) && \n                           eventDate.getYear() == today.getYear();\n                default:\n                    return true;\n            }\n        } catch (DateTimeParseException e) {\n            System.err.println(\"Error parsing date: \" + e.getMessage());\n            return false;\n        }\n    }\n\n    // Registration methods\n    @FXML\n    private void registerForEvent() {\n        if (selectedEvent != null) {\n            String currentStudents = selectedEvent.getRegisteredStudents();\n            String newStudents = currentStudents.isEmpty() ? \n                UserDatabase.CurrentUser.getUsername() :\n                currentStudents + \",\" + UserDatabase.CurrentUser.getUsername();\n            \n            selectedEvent.setRegisteredStudents(newStudents);\n            \n            try {\n                excelReader.writeEventsToExcel(excelReader.eventList);\n            } catch (IOException e) {\n                showAlert(\"Error\", \"Failed to save registration: \" + e.getMessage(), \n                    Alert.AlertType.ERROR);\n                return;\n            }\n            \n            updateEventDetails(selectedEvent);\n            showAlert(\"Success\", \"Successfully registered for the event!\", \n                Alert.AlertType.INFORMATION);\n        }\n    }\n\n    @FXML\n    private void cancelRegistration() {\n        if (selectedEvent != null) {\n            String currentStudents = selectedEvent.getRegisteredStudents();\n            String[] students = currentStudents.split(\",\");\n            StringBuilder newStudents = new StringBuilder();\n            \n            for (String student : students) {\n                if (!student.equals(UserDatabase.CurrentUser.getUsername())) {\n                    if (newStudents.length() > 0) {\n                        newStudents.append(\",\");\n                    }\n                    newStudents.append(student);\n                }\n            }\n            \n            selectedEvent.setRegisteredStudents(newStudents.toString());\n            \n            try {\n                excelReader.writeEventsToExcel(excelReader.eventList);\n            } catch (IOException e) {\n                showAlert(\"Error\", \"Failed to cancel registration: \" + e.getMessage(), \n                    Alert.AlertType.ERROR);\n                return;\n            }\n            \n            updateEventDetails(selectedEvent);\n            showAlert(\"Success\", \"Successfully cancelled registration!\", \n                Alert.AlertType.INFORMATION);\n        }\n    }\n\n    private String extractDate(String dateTime) {\n        if (dateTime == null || dateTime.isEmpty()) {\n            return \"TBA\";\n        }\n        String[] parts = dateTime.split(\" \");\n        return parts[0];\n    }\n\n    private String extractTime(String dateTime) {\n        if (dateTime == null || dateTime.isEmpty()) {\n            return \"TBA\";\n        }\n        String[] parts = dateTime.split(\" \");\n        return parts.length > 1 ? parts[1] : \"TBA\";\n    }\n\n    private void showAlert(String title, String content, Alert.AlertType type) {\n        Alert alert = new Alert(type);\n        alert.setTitle(title);\n        alert.setHeaderText(null);\n        alert.setContentText(content);\n        alert.showAndWait();\n    }\n} 
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/java/com/example/phase1_1420/EventManagementController.java b/ManagementSystem/src/main/java/com/example/phase1_1420/EventManagementController.java
+--- a/ManagementSystem/src/main/java/com/example/phase1_1420/EventManagementController.java	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/java/com/example/phase1_1420/EventManagementController.java	(date 1743706776177)
+@@ -301,7 +301,7 @@
+             selectedEventCostText.setText(event.getCost());
+             
+             // Update registration status
+-            String currentUserId = UserDatabase.CurrentUser.getUsername();
++            String currentUserId = UserDatabase.CurrentUser.getId();
+             String registeredStudents = event.getRegisteredStudents();
+             boolean isRegistered = registeredStudents != null && registeredStudents.contains(currentUserId);
+             
+@@ -374,8 +374,8 @@
+         if (selectedEvent != null) {
+             String currentStudents = selectedEvent.getRegisteredStudents();
+             String newStudents = currentStudents.isEmpty() ? 
+-                UserDatabase.CurrentUser.getUsername() :
+-                currentStudents + "," + UserDatabase.CurrentUser.getUsername();
++                UserDatabase.CurrentUser.getId() : 
++                currentStudents + "," + UserDatabase.CurrentUser.getId();
+             
+             selectedEvent.setRegisteredStudents(newStudents);
+             
+@@ -401,7 +401,7 @@
+             StringBuilder newStudents = new StringBuilder();
+             
+             for (String student : students) {
+-                if (!student.equals(UserDatabase.CurrentUser.getUsername())) {
++                if (!student.equals(UserDatabase.CurrentUser.getId())) {
+                     if (newStudents.length() > 0) {
+                         newStudents.append(",");
+                     }
+Index: ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardViewController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.phase1_1420;\n\nimport javafx.fxml.FXML;\nimport javafx.fxml.Initializable;\nimport javafx.scene.control.*;\nimport javafx.scene.text.Text;\nimport javafx.collections.FXCollections;\nimport javafx.collections.ObservableList;\nimport javafx.beans.property.SimpleStringProperty;\nimport java.net.URL;\nimport java.util.ResourceBundle;\nimport java.time.LocalDate;\nimport java.time.format.DateTimeFormatter;\n\npublic class UserDashboardViewController implements Initializable {\n    @FXML private Text studentNameText;\n    @FXML private Text studentIdText;\n    @FXML private Text academicLevelText;\n    @FXML private Text currentSemText;\n    @FXML private Text graduationDateText;\n    @FXML private ProgressBar progressBar;\n    @FXML private Label progressLabel;\n    \n    @FXML private TableView<Course> coursesTable;\n    @FXML private TableColumn<Course, String> courseCodeColumn;\n    @FXML private TableColumn<Course, String> courseNameColumn;\n    @FXML private TableColumn<Course, String> instructorColumn;\n    @FXML private TableColumn<Course, String> scheduleColumn;\n    \n    @FXML private TableView<Event> eventsTable;\n    @FXML private TableColumn<Event, String> eventNameColumn;\n    @FXML private TableColumn<Event, String> eventDateColumn;\n    @FXML private TableColumn<Event, String> eventLocationColumn;\n\n    private final ExcelFile excelReader = new ExcelFile();\n    private Student currentStudent;\n\n    @Override\n    public void initialize(URL location, ResourceBundle resources) {\n        try {\n            System.out.println(\"\\n=== Initializing UserDashboardViewController ===\");\n            \n            // Load data from Excel\n            excelReader.ReadingNameExcelFile();\n            \n            // Get current student from UserDatabase\n            currentStudent = (Student) UserDatabase.CurrentUser;\n            System.out.println(\"Current Student:\");\n            System.out.println(\"- ID: \" + currentStudent.getId());\n            System.out.println(\"- Name: \" + currentStudent.getUsername());\n            System.out.println(\"- Academic Level: \" + currentStudent.getAcademicLevel());\n            System.out.println(\"- Current Semester: \" + currentStudent.getCurrentSem());\n            System.out.println(\"- Subjects: \" + currentStudent.getSubjects());\n            \n            // Initialize table columns\n            initializeColumns();\n            \n            // Update UI with student information\n            updateStudentInfo();\n            \n            // Load tables with data\n            loadCoursesTable();\n            loadEventsTable();\n        } catch (Exception e) {\n            System.err.println(\"Error in initialize: \" + e.getMessage());\n            e.printStackTrace();\n        }\n    }\n\n    private void initializeColumns() {\n        // Courses table\n        courseCodeColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(cellData.getValue().getCourseCode()));\n        courseNameColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(cellData.getValue().getCourseName()));\n        instructorColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(cellData.getValue().getTeacherName()));\n        scheduleColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(cellData.getValue().getLectureTime()));\n\n        // Events table\n        eventNameColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(cellData.getValue().getEventName()));\n        eventDateColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(cellData.getValue().getDateTime()));\n        eventLocationColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(cellData.getValue().getLocation()));\n    }\n\n    private void updateStudentInfo() {\n        studentNameText.setText(currentStudent.getUsername());\n        studentIdText.setText(currentStudent.getId());\n        academicLevelText.setText(currentStudent.getAcademicLevel());\n        currentSemText.setText(currentStudent.getCurrentSem());\n        graduationDateText.setText(calculateGraduationDate());\n        \n\n        progressBar.setProgress((double)currentStudent.getProgress() / 100 );\n        progressLabel.setText(currentStudent.getProgress() + \"% Complete\");\n    }\n\n    private String calculateGraduationDate() {\n        String academicLevel = currentStudent.getAcademicLevel();\n        int currentLevel;\n        \n        // Convert academic level text to number\n        switch (academicLevel.toLowerCase()) {\n            case \"freshman\":\n                currentLevel = 1;\n                break;\n            case \"sophomore\":\n                currentLevel = 2;\n                break;\n            case \"junior\":\n                currentLevel = 3;\n                break;\n            case \"senior\":\n                currentLevel = 4;\n                break;\n            default:\n                currentLevel = 1; // Default to freshman if unknown\n        }\n        \n        // Parse semester string (e.g., \"Fall 2025\")\n        String currentSemStr = currentStudent.getCurrentSem();\n        int currentSem;\n        if (currentSemStr.toLowerCase().contains(\"fall\")) {\n            currentSem = 1;\n        } else if (currentSemStr.toLowerCase().contains(\"spring\")) {\n            currentSem = 2;\n        } else {\n            currentSem = 1; // Default to Fall if unknown\n        }\n        \n        int remainingSemesters = (4 - currentLevel) * 2 + (2 - currentSem);\n        \n        // Assuming 4 months per semester\n        int monthsUntilGraduation = remainingSemesters * 4;\n        LocalDate graduationDate = LocalDate.now().plusMonths(monthsUntilGraduation);\n        \n        return graduationDate.format(DateTimeFormatter.ofPattern(\"MMMM yyyy\"));\n    }\n\n    private void loadCoursesTable() {\n        // Get the student's subjects string from the current student object\n        String studentSubjectsStr = currentStudent.getSubjects();\n        System.out.println(\"\\n=== Course Loading Debug ===\");\n        System.out.println(\"Student ID: \" + currentStudent.getId());\n        System.out.println(\"Raw Subjects String: '\" + studentSubjectsStr + \"'\");\n        \n        // Create an observable list to hold the enrolled courses\n        ObservableList<Course> enrolledCourses = FXCollections.observableArrayList();\n        \n        // Check if the student has any subjects registered\n        if (studentSubjectsStr == null || studentSubjectsStr.trim().isEmpty()) {\n            System.out.println(\"WARNING: Student has no subjects registered!\");\n            coursesTable.setItems(enrolledCourses);\n            return;\n        }\n        \n        // Split the subjects string into an array and clean each subject\n        String[] studentSubjects = studentSubjectsStr.split(\",\");\n        for (int i = 0; i < studentSubjects.length; i++) {\n            studentSubjects[i] = studentSubjects[i].trim().toUpperCase();\n        }\n        \n        // Create a set to keep track of processed subjects to avoid duplicates\n        java.util.Set<String> processedSubjects = new java.util.HashSet<>();\n        \n        // First pass: Match existing courses with student's subjects\n        for (Course course : excelReader.courseList) {\n            String courseSubjectCode = course.getCode().trim().toUpperCase();\n            System.out.println(\"\\nChecking course: \" + course.getCourseName());\n            System.out.println(\"Subject code: '\" + courseSubjectCode + \"'\");\n            \n            // Check each of the student's subjects\n            for (String studentSubject : studentSubjects) {\n                if (studentSubject.isEmpty()) continue;\n                \n                System.out.println(\"Comparing with student subject: '\" + studentSubject + \"'\");\n                \n                // Check for exact match (after converting to uppercase)\n                if (courseSubjectCode.equals(studentSubject)) {\n                    // Only add the course if we haven't processed this subject code before\n                    if (!processedSubjects.contains(courseSubjectCode)) {\n                        System.out.println(\"✓ Match found! Adding course: \" + course.getCourseName());\n                        enrolledCourses.add(course);\n                        processedSubjects.add(courseSubjectCode);\n                        break;\n                    }\n                }\n            }\n        }\n        \n        // Second pass: Create basic entries for subjects without corresponding courses\n        for (String studentSubject : studentSubjects) {\n            if (studentSubject.trim().isEmpty()) continue;\n            \n            // Skip if we already have a course for this subject\n            if (processedSubjects.contains(studentSubject)) continue;\n            \n            // Create a basic course entry for subjects without corresponding courses\n            Course basicCourse = new Course(\n                studentSubject,  // Use subject code as course code\n                \"N/A\",          // No course name available\n                studentSubject, // Use subject code\n                \"N/A\",         // No section number\n                0.0,           // Default capacity\n                \"N/A\",         // No lecture time\n                \"N/A\",         // No final exam time\n                \"N/A\",         // No location\n                \"N/A\"          // No instructor\n            );\n            enrolledCourses.add(basicCourse);\n            processedSubjects.add(studentSubject);\n        }\n        \n        // Set the items in the table\n        coursesTable.setItems(enrolledCourses);\n        System.out.println(\"Total courses loaded: \" + enrolledCourses.size());\n    }\n\n    private void loadEventsTable() {\n        // Filter events based on student's registration\n        ObservableList<Event> registeredEvents = FXCollections.observableArrayList();\n        String studentId = currentStudent.getUsername();\n        \n        for (Event event : excelReader.eventList) {\n            if (event.getRegisteredStudents().contains(studentId)) {\n                registeredEvents.add(event);\n            }\n        }\n        \n        eventsTable.setItems(registeredEvents);\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardViewController.java b/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardViewController.java
+--- a/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardViewController.java	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardViewController.java	(date 1743706778930)
+@@ -223,7 +223,7 @@
+     private void loadEventsTable() {
+         // Filter events based on student's registration
+         ObservableList<Event> registeredEvents = FXCollections.observableArrayList();
+-        String studentId = currentStudent.getUsername();
++        String studentId = currentStudent.getId();
+         
+         for (Event event : excelReader.eventList) {
+             if (event.getRegisteredStudents().contains(studentId)) {
+Index: ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.phase1_1420;\n\nimport javafx.animation.TranslateTransition;\nimport javafx.fxml.FXML;\nimport javafx.fxml.FXMLLoader;\nimport javafx.scene.Parent;\nimport javafx.scene.Scene;\nimport javafx.scene.control.Button;\nimport javafx.scene.layout.Pane;\nimport javafx.scene.layout.StackPane;\nimport javafx.scene.text.Text;\nimport javafx.stage.Stage;\nimport javafx.util.Duration;\nimport java.io.IOException;\nimport javafx.fxml.Initializable;\nimport javafx.scene.control.*;\nimport javafx.collections.FXCollections;\nimport javafx.collections.ObservableList;\nimport javafx.beans.property.SimpleStringProperty;\nimport javafx.scene.layout.VBox;\nimport java.net.URL;\nimport java.util.ResourceBundle;\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class UserDashboardController implements Initializable {\n    @FXML private Pane sidebarPane;\n    @FXML private Button toggleButton;\n    @FXML private StackPane contentArea;\n    @FXML private Text studentNameText;\n    @FXML private Text studentIdText;\n    @FXML private Text academicLevelText;\n    @FXML private Text currentSemText;\n    @FXML private Text graduationDateText;\n    @FXML private TableView<Event> eventsTable;\n    @FXML private TableColumn<Event, String> eventNameColumn;\n    @FXML private TableColumn<Event, String> eventDateColumn;\n    @FXML private TableColumn<Event, String> eventLocationColumn;\n    @FXML private Text UserName;\n    @FXML private Text UserID;\n\n    private boolean sidebarVisible = false;\n    private final ExcelFile excelReader = new ExcelFile();\n    private final ObservableList<Event> registeredEvents = FXCollections.observableArrayList();\n\n    @Override\n    public void initialize(URL location, ResourceBundle resources) {\n        try {\n            // Load data from Excel\n            excelReader.ReadingNameExcelFile();\n            \n            // Initialize sidebar\n            sidebarPane.setTranslateX(-200);\n            toggleButton.setText(\"☰\");\n            \n            // Load initial content\n            loadContent(\"user-dashboard-view.fxml\");\n            \n            // Set up user info\n            if (UserDatabase.CurrentUser != null) {\n                UserName.setText(UserDatabase.CurrentUser.getUsername());\n                UserID.setText(UserDatabase.CurrentUser.getId());\n            }\n        } catch (Exception e) {\n            System.err.println(\"Error in initialize: \" + e.getMessage());\n            e.printStackTrace();\n        }\n    }\n\n    private void updateUserInfo() {\n        if (UserDatabase.CurrentUser != null) {\n            Student currentStudent = (Student) UserDatabase.CurrentUser;\n            studentNameText.setText(currentStudent.getUsername());\n            studentIdText.setText(currentStudent.getId());\n            academicLevelText.setText(currentStudent.getAcademicLevel());\n            currentSemText.setText(currentStudent.getCurrentSem());\n            graduationDateText.setText(\"Expected: \" + currentStudent.getCurrentSem());\n        }\n    }\n\n    private void setupRegisteredEventsTable() {\n        eventNameColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(cellData.getValue().getEventName()));\n        eventDateColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(extractDate(cellData.getValue().getDateTime())));\n        eventLocationColumn.setCellValueFactory(cellData -> \n            new SimpleStringProperty(cellData.getValue().getLocation()));\n    }\n\n    private void loadRegisteredEvents() {\n        registeredEvents.clear();\n        String currentUserId = UserDatabase.CurrentUser.getId();\n        \n        for (Event event : excelReader.eventList) {\n            String registeredStudents = event.getRegisteredStudents();\n            if (registeredStudents != null && registeredStudents.contains(currentUserId)) {\n                registeredEvents.add(event);\n            }\n        }\n        \n        eventsTable.setItems(registeredEvents);\n    }\n\n    private String extractDate(String dateTime) {\n        if (dateTime == null || dateTime.isEmpty()) {\n            return \"TBA\";\n        }\n        String[] parts = dateTime.split(\" \");\n        return parts[0];\n    }\n\n    @FXML\n    private void toggleSidebar() {\n        TranslateTransition slide = new TranslateTransition(Duration.millis(300), sidebarPane);\n\n        if (sidebarVisible) {\n            slide.setToX(-200);\n            toggleButton.setText(\"☰\");\n            sidebarVisible = false;\n        } else {\n            slide.setToX(0);\n            toggleButton.setText(\"≡\");\n            sidebarVisible = true;\n        }\n        slide.play();\n    }\n\n    @FXML\n    private void handleDashboard() { loadContent(\"user-dashboard-view.fxml\"); }\n\n    @FXML\n    private void handleCourses() { loadContent(\"course-management-view.fxml\"); }\n\n    @FXML\n    private void handleSubjects() { loadContent(\"subject-management-view.fxml\"); }\n\n    @FXML\n    private void handleEvents() {\n        loadContent(\"event-management-view.fxml\");\n    }\n\n    @FXML\n    private void handleProfile() { loadContent(\"studentProfile.fxml\"); }\n\n    @FXML\n    private void handleFaculty() {\n        loadContent(\"faculty-management-view.fxml\");\n    }\n\n\n    @FXML\n    private void handleLogout() {\n        try {\n            FXMLLoader loader = new FXMLLoader(getClass().getResource(\"/com/example/phase1_1420/login-view.fxml\"));\n            Scene scene = new Scene(loader.load());\n\n            Stage stage = (Stage) sidebarPane.getScene().getWindow();\n            stage.setScene(scene);\n            stage.setTitle(\"Login Page\");\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n\n    private void loadContent(String fxmlFile) {\n        try {\n            FXMLLoader loader = new FXMLLoader(getClass().getResource(\"/com/example/phase1_1420/\" + fxmlFile));\n            contentArea.getChildren().clear();\n            contentArea.getChildren().add(loader.load());\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardController.java b/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardController.java
+--- a/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardController.java	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardController.java	(date 1743706781663)
+@@ -140,13 +140,10 @@
+     }
+ 
+     @FXML
+-    private void handleProfile() { loadContent("studentProfile.fxml"); }
+-
++    private void handleProfile() { loadContent("user-profile-view.fxml"); }
++    
+     @FXML
+-    private void handleFaculty() {
+-        loadContent("faculty-management-view.fxml");
+-    }
+-
++    private void handleFaculty() { loadContent("faculty-view.fxml");}
+ 
+     @FXML
+     private void handleLogout() {
+Index: ManagementSystem/src/main/java/com/example/phase1_1420/AdminDashboardController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.phase1_1420;\n\n\nimport javafx.animation.TranslateTransition;\nimport javafx.event.ActionEvent;\nimport javafx.fxml.FXML;\nimport javafx.fxml.FXMLLoader;\nimport javafx.scene.Scene;\nimport javafx.scene.control.Button;\nimport javafx.scene.layout.Pane;\nimport javafx.scene.layout.StackPane;\nimport javafx.scene.text.Text;\nimport javafx.stage.Stage;\nimport javafx.util.Duration;\nimport java.io.IOException;\n\n\npublic class AdminDashboardController {\n    @FXML private Pane sidebarPane;\n    @FXML private Button toggleButton;\n    @FXML private StackPane contentArea;\n    @FXML private Text UserName;\n    @FXML private Text UserID;\n    private boolean sidebarVisible = false;\n\n\n    @FXML\n    private void initialize() {\n\n\n        sidebarPane.setTranslateX(-200);\n        toggleButton.setText(\"☰\");\n        loadContent(\"admin-dashboard-view.fxml\");\n        UserName.setText(UserDatabase.CurrentUser.getUsername());\n        UserID.setText(UserDatabase.CurrentUser.getId());\n    }\n\n\n    @FXML\n    private void toggleSidebar() {\n\n\n        TranslateTransition slide = new TranslateTransition(Duration.millis(300), sidebarPane);\n\n\n        if (sidebarVisible) {\n            slide.setToX(-200);\n            toggleButton.setText(\"☰\");\n            sidebarVisible = false;\n        } else {\n            slide.setToX(0);\n            toggleButton.setText(\"≡\");\n            sidebarVisible = true;\n        }\n\n\n        slide.play();\n    }\n\n\n    @FXML\n    private void handleDashboard() { loadContent(\"admin-dashboard-view.fxml\"); }\n\n\n    @FXML\n    private void handleSubjects() {loadContent(\"subject-management-view.fxml\");}\n\n\n    @FXML\n    private void handleCourses() { loadContent(\"course-management-view.fxml\"); }\n\n\n    @FXML\n    private void handleStudents(ActionEvent event) { loadContent(\"StudentManagement.fxml\"); }\n\n\n    @FXML\n    private void handleFaculty() {\n        loadContent(\"faculty-management-view.fxml\");\n    }\n\n\n    @FXML\n    private void handleEvents() { loadContent(\"event-management-view.fxml\"); }\n\n\n    @FXML\n    private void handleLogout() {\n        try {\n            FXMLLoader loader = new FXMLLoader(getClass().getResource(\"/com/example/phase1_1420/login-view.fxml\"));\n            Scene scene = new Scene(loader.load());\n\n\n            Stage stage = (Stage) sidebarPane.getScene().getWindow();\n            stage.setScene(scene);\n            stage.setTitle(\"Login Page\");\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n\n\n    private void loadContent(String fxmlFile) {\n        try {\n            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));\n\n            contentArea.getChildren().clear();\n\n\n            contentArea.getChildren().add(loader.load());\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n}\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/java/com/example/phase1_1420/AdminDashboardController.java b/ManagementSystem/src/main/java/com/example/phase1_1420/AdminDashboardController.java
+--- a/ManagementSystem/src/main/java/com/example/phase1_1420/AdminDashboardController.java	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/java/com/example/phase1_1420/AdminDashboardController.java	(date 1743706789716)
+@@ -1,11 +1,11 @@
+ package com.example.phase1_1420;
+ 
+-
+ import javafx.animation.TranslateTransition;
+-import javafx.event.ActionEvent;
+ import javafx.fxml.FXML;
+ import javafx.fxml.FXMLLoader;
++import javafx.scene.Parent;
+ import javafx.scene.Scene;
++import javafx.scene.control.Alert;
+ import javafx.scene.control.Button;
+ import javafx.scene.layout.Pane;
+ import javafx.scene.layout.StackPane;
+@@ -14,7 +14,6 @@
+ import javafx.util.Duration;
+ import java.io.IOException;
+ 
+-
+ public class AdminDashboardController {
+     @FXML private Pane sidebarPane;
+     @FXML private Button toggleButton;
+@@ -23,11 +22,9 @@
+     @FXML private Text UserID;
+     private boolean sidebarVisible = false;
+ 
+-
+     @FXML
+     private void initialize() {
+ 
+-
+         sidebarPane.setTranslateX(-200);
+         toggleButton.setText("☰");
+         loadContent("admin-dashboard-view.fxml");
+@@ -35,14 +32,11 @@
+         UserID.setText(UserDatabase.CurrentUser.getId());
+     }
+ 
+-
+     @FXML
+     private void toggleSidebar() {
+ 
+-
+         TranslateTransition slide = new TranslateTransition(Duration.millis(300), sidebarPane);
+ 
+-
+         if (sidebarVisible) {
+             slide.setToX(-200);
+             toggleButton.setText("☰");
+@@ -53,44 +47,33 @@
+             sidebarVisible = true;
+         }
+ 
+-
+         slide.play();
+     }
+ 
+-
+     @FXML
+     private void handleDashboard() { loadContent("admin-dashboard-view.fxml"); }
+ 
+-
+     @FXML
+     private void handleSubjects() {loadContent("subject-management-view.fxml");}
+ 
+-
+-    @FXML
++        @FXML
+     private void handleCourses() { loadContent("course-management-view.fxml"); }
+ 
+-
+     @FXML
+-    private void handleStudents(ActionEvent event) { loadContent("StudentManagement.fxml"); }
+-
++    private void handleStudents() { loadContent("admin-students-view.fxml"); }
+ 
+     @FXML
+-    private void handleFaculty() {
+-        loadContent("faculty-management-view.fxml");
+-    }
+-
++    private void handleFaculty() { loadContent("admin-faculty-view.fxml"); }
+ 
+     @FXML
+     private void handleEvents() { loadContent("event-management-view.fxml"); }
+ 
+-
+     @FXML
+     private void handleLogout() {
+         try {
+             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/phase1_1420/login-view.fxml"));
+             Scene scene = new Scene(loader.load());
+ 
+-
+             Stage stage = (Stage) sidebarPane.getScene().getWindow();
+             stage.setScene(scene);
+             stage.setTitle("Login Page");
+@@ -99,14 +82,10 @@
+         }
+     }
+ 
+-
+     private void loadContent(String fxmlFile) {
+         try {
+             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+-
+             contentArea.getChildren().clear();
+-
+-
+             contentArea.getChildren().add(loader.load());
+         } catch (IOException e) {
+             e.printStackTrace();
+@@ -114,4 +93,3 @@
+     }
+ }
+ 
+-
+Index: ManagementSystem/src/main/java/com/example/phase1_1420/LoginController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.phase1_1420;\n\nimport javafx.fxml.FXML;\nimport javafx.fxml.FXMLLoader;\nimport javafx.scene.Scene;\nimport javafx.scene.control.Label;\nimport javafx.scene.control.PasswordField;\nimport javafx.scene.control.TextField;\nimport javafx.stage.Stage;\nimport java.io.IOException;\nimport javafx.animation.PauseTransition;\nimport javafx.util.Duration;\n\npublic class LoginController {\n    @FXML private TextField userField;\n    @FXML private PasswordField passField;\n    @FXML private Label errorLabel;\n\n    private int failedAttempts = 0;\n    private static final int MAX_ATTEMPTS = 5;\n\n    @FXML\n    private void handleLogin() throws IOException {\n        String username = userField.getText();\n        String password = passField.getText();\n\n        ExcelFile a = new ExcelFile();\n        a.ReadingNameExcelFile();\n\n\n        String role = UserDatabase.authenticate(username, password);\n\n        if (role != null) {\n            failedAttempts = 0; // Reset on success\n            loadDashboard(role);\n        } else {\n            failedAttempts++;\n            errorLabel.setText(\"Invalid Login! - (\" + failedAttempts + \"/\" + MAX_ATTEMPTS + \" Login Attempts Used)\");\n            errorLabel.setStyle(\"-fx-text-fill: red;\");\n\n            if (failedAttempts >= MAX_ATTEMPTS) {\n                errorLabel.setText(\"Too many failed Login attempts! Please Try again later. Closing login screen.\");\n\n\n                PauseTransition delay = new PauseTransition(Duration.seconds(5));\n                delay.setOnFinished(e -> System.exit(0));\n                delay.play();\n            }\n        }\n    }\n\n    private void loadDashboard(String role) {\n        try {\n            String fxmlFile;\n            if( \"ADMIN\".equals(role)){\n                fxmlFile = \"admin-dashboard.fxml\";\n            }else if (\"FACULTY\".equals(role)){\n                fxmlFile = \"faculty-dashboard.fxml\";\n            }else{\n                fxmlFile = \"user-dashboard.fxml\";\n            }\n\n            FXMLLoader loader = new FXMLLoader(getClass().getResource(\"/com/example/phase1_1420/\" + fxmlFile));\n            Scene scene = new Scene(loader.load());\n\n            Stage stage = (Stage) userField.getScene().getWindow();\n            stage.setScene(scene);\n            stage.setTitle(role + \" Dashboard\");\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/java/com/example/phase1_1420/LoginController.java b/ManagementSystem/src/main/java/com/example/phase1_1420/LoginController.java
+--- a/ManagementSystem/src/main/java/com/example/phase1_1420/LoginController.java	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/java/com/example/phase1_1420/LoginController.java	(date 1743706781712)
+@@ -24,10 +24,14 @@
+         String username = userField.getText();
+         String password = passField.getText();
+ 
+-        ExcelFile a = new ExcelFile();
+-        a.ReadingNameExcelFile();
+-
++        // Create a new Excel file reader and load all data
++        ExcelFile excelFile = new ExcelFile();
++        excelFile.ReadingNameExcelFile();
++        
++        // Ensure the UserDatabase has the latest data
++        UserDatabase.refreshUserData(excelFile);
+ 
++        // Try to authenticate the user
+         String role = UserDatabase.authenticate(username, password);
+ 
+         if (role != null) {
+@@ -41,7 +45,6 @@
+             if (failedAttempts >= MAX_ATTEMPTS) {
+                 errorLabel.setText("Too many failed Login attempts! Please Try again later. Closing login screen.");
+ 
+-
+                 PauseTransition delay = new PauseTransition(Duration.seconds(5));
+                 delay.setOnFinished(e -> System.exit(0));
+                 delay.play();
+Index: ManagementSystem/src/main/java/com/example/phase1_1420/Course.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.phase1_1420;\n\npublic class Course extends Subject {\n    private String courseCode;\n    private String courseName;\n    private String sectionNumber;\n    private double capacity;\n    private String lectureTime;\n    private String finalExamDateTime;\n    private String location;\n    private String teacherName;\n\n    public Course(String courseCode, String courseName, String subjectCode,\n                  String sectionNumber, double capacity, String lectureTime,\n                  String finalExamDateTime, String location, String teacherName) {\n\n        super(subjectCode, subjectCode); // Use subjectCode for both code and name\n        this.courseCode = courseCode;\n        this.courseName = courseName;\n        this.sectionNumber = sectionNumber;\n        this.capacity = capacity;\n        this.lectureTime = lectureTime;\n        this.finalExamDateTime = finalExamDateTime;\n        this.location = location;\n        this.teacherName = teacherName;\n    }\n\n    public String getCourseCode(){\n       return this.courseCode;\n    }\n\n    public void setCourseCode(String Input){\n        this.courseCode = Input;\n    }\n\n    public String getCourseName(){\n        return this.courseName;\n    }\n\n    public void setCourseName(String Input){\n        this.courseName = Input;\n    }\n\n    public String getSectionNumber(){\n        return this.sectionNumber;\n    }\n\n    public void setSectionNumber(String Input){\n        this.sectionNumber = Input;\n    }\n\n    public String getCapacity(){\n        return ( \"\" + this.capacity);\n    }\n\n    public void setCapacity(Double Input){\n        this.capacity = Input;\n    }\n\n    public String getLectureTime(){\n        return this.lectureTime;\n    }\n\n    public void setLectureTime(String Input){\n        this.lectureTime = Input;\n    }\n\n    public String getFinalExamDateTime(){\n        return this.finalExamDateTime;\n    }\n\n    public void setFinalExamDateTime(String Input){\n        this.finalExamDateTime = Input;\n    }\n\n    public String getLocation(){\n        return this.location;\n    }\n\n    public void setLocation(String Input){\n        this.location = Input;\n    }\n\n    public String getTeacherName(){\n        return this.teacherName;\n    }\n\n    public void setTeacherName(String Input){\n        this.teacherName = Input;\n    }\n\n    @Override\n    public String toString() {\n        return \"Course: \" + courseName +\n                \" | Subject: \" + subjectName +\n                \" | Section: \" + sectionNumber +\n                \" | Teacher: \" + teacherName;\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/java/com/example/phase1_1420/Course.java b/ManagementSystem/src/main/java/com/example/phase1_1420/Course.java
+--- a/ManagementSystem/src/main/java/com/example/phase1_1420/Course.java	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/java/com/example/phase1_1420/Course.java	(date 1743706781716)
+@@ -1,99 +1,147 @@
+ package com.example.phase1_1420;
+ 
+-public class Course extends Subject {
++public class Course {
+     private String courseCode;
+     private String courseName;
+-    private String sectionNumber;
+-    private double capacity;
+-    private String lectureTime;
+-    private String finalExamDateTime;
+-    private String location;
+-    private String teacherName;
+-
+-    public Course(String courseCode, String courseName, String subjectCode,
+-                  String sectionNumber, double capacity, String lectureTime,
+-                  String finalExamDateTime, String location, String teacherName) {
++    private String instructor;
++    private String schedule;
++    private String subjectCode;
++    private String enrolledStudents;
++    
++    // Additional fields for backward compatibility
++    private String sectionNumber = "N/A";
++    private double capacity = 0.0;
++    private String location = "N/A";
++    private String finalExamDateTime = "N/A";
+ 
+-        super(subjectCode, subjectCode); // Use subjectCode for both code and name
++    public Course(String courseCode, String courseName, String instructor, String schedule) {
+         this.courseCode = courseCode;
+         this.courseName = courseName;
+-        this.sectionNumber = sectionNumber;
+-        this.capacity = capacity;
+-        this.lectureTime = lectureTime;
+-        this.finalExamDateTime = finalExamDateTime;
+-        this.location = location;
+-        this.teacherName = teacherName;
++        this.instructor = instructor;
++        this.schedule = schedule;
++        this.enrolledStudents = "";
++    }
++
++    public Course(String courseCode, String courseName, String subjectCode) {
++        this.courseCode = courseCode;
++        this.courseName = courseName;
++        this.subjectCode = subjectCode;
++        this.instructor = "Not assigned";
++        this.schedule = "TBA";
++        this.enrolledStudents = "";
+     }
+ 
+-    public String getCourseCode(){
+-       return this.courseCode;
++    public String getCourseCode() {
++        return courseCode != null ? courseCode : "";
+     }
+ 
+-    public void setCourseCode(String Input){
+-        this.courseCode = Input;
++    public void setCourseCode(String courseCode) {
++        this.courseCode = courseCode;
+     }
+ 
+-    public String getCourseName(){
+-        return this.courseName;
++    public String getCourseName() {
++        return courseName != null ? courseName : "";
++    }
++
++    public void setCourseName(String courseName) {
++        this.courseName = courseName;
++    }
++
++    public String getInstructor() {
++        return instructor != null ? instructor : "";
++    }
++
++    public void setInstructor(String instructor) {
++        this.instructor = instructor;
++    }
++
++    public String getSchedule() {
++        return schedule != null ? schedule : "";
++    }
++
++    public void setSchedule(String schedule) {
++        this.schedule = schedule;
+     }
+ 
+-    public void setCourseName(String Input){
+-        this.courseName = Input;
++    public String getSubjectCode() {
++        return subjectCode != null ? subjectCode : "";
+     }
+ 
+-    public String getSectionNumber(){
+-        return this.sectionNumber;
++    public void setSubjectCode(String subjectCode) {
++        this.subjectCode = subjectCode;
++    }
++
++    public String getEnrolledStudents() {
++        return enrolledStudents != null ? enrolledStudents : "";
++    }
++
++    public void setEnrolledStudents(String enrolledStudents) {
++        this.enrolledStudents = enrolledStudents;
++    }
++
++    public boolean isStudentEnrolled(String username) {
++        if (enrolledStudents == null || enrolledStudents.isEmpty()) {
++            return false;
++        }
++        
++        String[] students = enrolledStudents.split(",");
++        for (String student : students) {
++            if (student.trim().equals(username)) {
++                return true;
++            }
++        }
++        return false;
++    }
++    
++    // Backwards compatibility methods
++    
++    public String getSectionNumber() {
++        return sectionNumber;
++    }
++    
++    public void setSectionNumber(String sectionNumber) {
++        this.sectionNumber = sectionNumber;
++    }
++    
++    public double getCapacity() {
++        return capacity;
+     }
+-
+-    public void setSectionNumber(String Input){
+-        this.sectionNumber = Input;
++    
++    public void setCapacity(double capacity) {
++        this.capacity = capacity;
+     }
+-
+-    public String getCapacity(){
+-        return ( "" + this.capacity);
++    
++    public String getLocation() {
++        return location;
+     }
+-
+-    public void setCapacity(Double Input){
+-        this.capacity = Input;
++    
++    public void setLocation(String location) {
++        this.location = location;
+     }
+-
+-    public String getLectureTime(){
+-        return this.lectureTime;
+-    }
+-
+-    public void setLectureTime(String Input){
+-        this.lectureTime = Input;
++    
++    public String getLectureTime() {
++        return schedule;
+     }
+-
+-    public String getFinalExamDateTime(){
+-        return this.finalExamDateTime;
+-    }
+-
+-    public void setFinalExamDateTime(String Input){
+-        this.finalExamDateTime = Input;
+-    }
+-
+-    public String getLocation(){
+-        return this.location;
++    
++    public String getFinalExamDateTime() {
++        return finalExamDateTime;
+     }
+-
+-    public void setLocation(String Input){
+-        this.location = Input;
++    
++    public void setFinalExamDateTime(String finalExamDateTime) {
++        this.finalExamDateTime = finalExamDateTime;
+     }
+-
+-    public String getTeacherName(){
+-        return this.teacherName;
++    
++    public String getTeacherName() {
++        return instructor;
+     }
+-
+-    public void setTeacherName(String Input){
+-        this.teacherName = Input;
++    
++    // Alias for getSubjectCode() for backward compatibility
++    public String getCode() {
++        return getSubjectCode();
+     }
+ 
+     @Override
+     public String toString() {
+-        return "Course: " + courseName +
+-                " | Subject: " + subjectName +
+-                " | Section: " + sectionNumber +
+-                " | Teacher: " + teacherName;
++        return courseName;
+     }
+ }
+\ No newline at end of file
+Index: ManagementSystem/src/main/java/com/example/phase1_1420/FacultyDashboardController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.phase1_1420;\n\nimport javafx.animation.TranslateTransition;\nimport javafx.fxml.FXML;\nimport javafx.fxml.FXMLLoader;\nimport javafx.scene.Scene;\nimport javafx.scene.control.Button;\nimport javafx.scene.layout.Pane;\nimport javafx.scene.layout.StackPane;\nimport javafx.scene.text.Text;\nimport javafx.stage.Stage;\nimport javafx.util.Duration;\n\nimport java.io.IOException;\n\npublic class FacultyDashboardController {\n    @FXML private Pane sidebarPane;\n    @FXML private Button toggleButton;\n    @FXML private StackPane contentArea;\n    @FXML private Text UserName;\n    @FXML private Text UserID;\n    private boolean sidebarVisible = false;\n    private final ExcelFile excelReader = new ExcelFile();\n\n    @FXML\n    private void initialize() {\n        try {\n            // Load data from Excel\n            excelReader.ReadingNameExcelFile();\n            \n            // Get current Faculty from UserDatabase\n            Faculty currentFaculty = (Faculty) UserDatabase.CurrentUser;\n            \n            // Set user information\n            UserName.setText(currentFaculty.getUsername());\n            UserID.setText(currentFaculty.getId());\n            \n            // Initialize sidebar\n            sidebarPane.setTranslateX(-200);\n            toggleButton.setText(\"☰\");\n            \n            // Load initial content\n            loadContent(\"faculty-dashboard-view.fxml\");\n        } catch (Exception e) {\n            e.printStackTrace();\n        }\n    }\n\n    @FXML\n    private void toggleSidebar() {\n        TranslateTransition slide = new TranslateTransition(Duration.millis(300), sidebarPane);\n\n        if (sidebarVisible) {\n            slide.setToX(-200);\n            toggleButton.setText(\"☰\");\n            sidebarVisible = false;\n        } else {\n            slide.setToX(0);\n            toggleButton.setText(\"≡\");\n            sidebarVisible = true;\n        }\n        slide.play();\n    }\n\n    @FXML\n    private void handleDashboard() { loadContent(\"faculty-dashboard-view.fxml\"); }\n\n    @FXML\n    private void handleCourses() { loadContent(\"course-management-view.fxml\"); }\n\n    @FXML\n    private void handleSubjects() { loadContent(\"subject-management-view.fxml\"); }\n\n    @FXML\n    private void handleEvents() { loadContent(\"event-management-view.fxml\"); }\n\n    @FXML\n    private void handleProfile() {\n        loadContent(\"facultyProfile.fxml\");\n    }\n\n\n    @FXML\n    private void handleStudents() { loadContent(\"students-view.fxml\"); }\n\n\n    @FXML\n    private void handleLogout() {\n        try {\n            FXMLLoader loader = new FXMLLoader(getClass().getResource(\"/com/example/phase1_1420/login-view.fxml\"));\n            Scene scene = new Scene(loader.load());\n\n            Stage stage = (Stage) sidebarPane.getScene().getWindow();\n            stage.setScene(scene);\n            stage.setTitle(\"Login Page\");\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n\n    private void loadContent(String fxmlFile) {\n        try {\n            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));\n            contentArea.getChildren().clear();\n            contentArea.getChildren().add(loader.load());\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyDashboardController.java b/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyDashboardController.java
+--- a/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyDashboardController.java	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyDashboardController.java	(date 1743706781733)
+@@ -87,13 +87,38 @@
+     @FXML
+     private void handleLogout() {
+         try {
++            System.out.println("Logging out faculty: " + UserDatabase.CurrentUser.getUsername());
++            
++            // Save any pending changes to Excel
++            try {
++                // Save events
++                excelReader.writeEventsToExcel();
++                System.out.println("Event data saved to Excel");
++                
++                // Save courses if modified by faculty
++                excelReader.writeCoursesToExcel(excelReader.courseList);
++                System.out.println("Course data saved to Excel");
++                
++                System.out.println("All data saved successfully before logout");
++            } catch (Exception e) {
++                System.err.println("Error saving data before logout: " + e.getMessage());
++                e.printStackTrace();
++            }
++            
++            // Clear current user
++            UserDatabase.CurrentUser = null;
++            
++            // Load login view
+             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/phase1_1420/login-view.fxml"));
+             Scene scene = new Scene(loader.load());
+ 
+             Stage stage = (Stage) sidebarPane.getScene().getWindow();
+             stage.setScene(scene);
+             stage.setTitle("Login Page");
++            
++            System.out.println("Logout successful");
+         } catch (IOException e) {
++            System.err.println("Error during logout: " + e.getMessage());
+             e.printStackTrace();
+         }
+     }
+Index: ManagementSystem/src/main/java/com/example/phase1_1420/Event.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.phase1_1420;\n\npublic class Event {\n\n    protected String eventID;\n    protected String eventName;\n    protected String description;\n    protected String location;\n    protected String dateTime;\n    protected double capacity;\n    protected String cost;\n    protected String registeredStudents;\n    protected String type;\n\n    public Event(String eventID, String eventName, String description, String location, String dateTime, double capacity,\n                 String cost, String registeredStudents, String type){\n        this.eventID = eventID;\n        this.eventName = eventName;\n        this.description = description;\n        this.location = location;\n        this.dateTime = dateTime;\n        this.capacity = capacity;\n        this.cost = cost;\n        this.registeredStudents = registeredStudents;\n        this.type = type;\n    }\n\n    public String getEventID() {\n        return eventID;\n    }\n\n    public void setEventID(String eventID) {\n        this.eventID = eventID;\n    }\n\n    public String getEventName() {\n        return eventName;\n    }\n\n    public void setEventName(String eventName) {\n        this.eventName = eventName;\n    }\n\n    public String getDescription() {\n        return description;\n    }\n\n    public void setDescription(String description) {\n        this.description = description;\n    }\n\n    public String getLocation() {\n        return location;\n    }\n\n    public void setLocation(String location) {\n        this.location = location;\n    }\n\n    public String getDateTime() {\n        return dateTime;\n    }\n\n    public void setDateTime(String dateTime) {\n        this.dateTime = dateTime;\n    }\n\n    public double getCapacity() {\n        return capacity;\n    }\n\n    public void setCapacity(double capacity) {\n        this.capacity = capacity;\n    }\n\n    public String getCost() {\n        return cost;\n    }\n\n    public void setCost(String cost) {\n        this.cost = cost;\n    }\n\n    public String getRegisteredStudents() {\n        return registeredStudents;\n    }\n\n    public void setRegisteredStudents(String registeredStudents) {\n        this.registeredStudents = registeredStudents;\n    }\n\n    public String getType() {\n        return type;\n    }\n\n    public void setType(String type) {\n        this.type = type;\n    }\n\n    @Override\n    public String toString() {\n        return \"Event ID: \" + eventID +\n                \" | Name: \" + eventName +\n                \" | Description: \" + description +\n                \" | Location: \" + location +\n                \" | Date/Time: \" + dateTime +\n                \" | Capacity: \" + capacity +\n                \" | Cost: \" + cost +\n                \" | Students Registered: \" + registeredStudents +\n                \" | Type: \" + type;\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/java/com/example/phase1_1420/Event.java b/ManagementSystem/src/main/java/com/example/phase1_1420/Event.java
+--- a/ManagementSystem/src/main/java/com/example/phase1_1420/Event.java	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/java/com/example/phase1_1420/Event.java	(date 1743706781737)
+@@ -1,28 +1,107 @@
+ package com.example.phase1_1420;
+ 
++import java.text.ParseException;
++import java.text.SimpleDateFormat;
++import java.util.Date;
++
+ public class Event {
+ 
+     protected String eventID;
+     protected String eventName;
+     protected String description;
+     protected String location;
+-    protected String dateTime;
++    protected String date;
++    protected String time;
+     protected double capacity;
+     protected String cost;
++    
++    
+     protected String registeredStudents;
+     protected String type;
+ 
+-    public Event(String eventID, String eventName, String description, String location, String dateTime, double capacity,
+-                 String cost, String registeredStudents, String type){
++    public Event(String eventID, String eventName, String description, String location, String date, double capacity,
++                 String cost, String registeredStudents, String type) {
+         this.eventID = eventID;
+         this.eventName = eventName;
+         this.description = description;
+         this.location = location;
+-        this.dateTime = dateTime;
++        this.date = formatDate(date);
++        this.time = "N/A";
+         this.capacity = capacity;
+         this.cost = cost;
+         this.registeredStudents = registeredStudents;
+-        this.type = type;
++        this.type = type != null && !type.equals("default") ? type : "Workshop";
++    }
++
++    public Event(String eventID, String eventName, String description, String location, String date, String time, double capacity, String cost, String registeredStudents, String type) {
++        this.eventID = eventID;
++        this.eventName = eventName;
++        this.description = description;
++        this.location = location;
++        this.date = formatDate(date);
++        this.time = formatTime(time);
++        this.capacity = capacity;
++        this.cost = cost;
++        this.registeredStudents = registeredStudents;
++        this.type = type != null && !type.equals("default") ? type : "Workshop";
++    }
++
++    private String formatDate(String inputDate) {
++        if (inputDate == null || inputDate.isEmpty()) {
++            return "";
++        }
++        try {
++            // Try different date formats
++            SimpleDateFormat[] formats = {
++                new SimpleDateFormat("yyyy-MM-dd"),
++                new SimpleDateFormat("MM/dd/yyyy"),
++                new SimpleDateFormat("dd/MM/yyyy")
++            };
++            
++            for (SimpleDateFormat format : formats) {
++                try {
++                    Date date = format.parse(inputDate);
++                    return format.format(date);
++                } catch (ParseException e) {
++                    // Try next format
++                    continue;
++                }
++            }
++            
++            // If none of the formats work, return the original date
++            return inputDate;
++        } catch (Exception e) {
++            System.err.println("Error formatting date: " + e.getMessage());
++            return inputDate;
++        }
++    }
++
++    private String formatTime(String inputTime) {
++        if (inputTime == null || inputTime.isEmpty() || inputTime.equals("N/A")) {
++            return "N/A";
++        }
++        try {
++            // Try to parse the time in various formats
++            SimpleDateFormat[] formats = {
++                new SimpleDateFormat("HH:mm"),
++                new SimpleDateFormat("h:mm"),
++                new SimpleDateFormat("H:mm"),
++                new SimpleDateFormat("HH:mm a")
++            };
++            
++            for (SimpleDateFormat format : formats) {
++                try {
++                    Date time = format.parse(inputTime);
++                    // Format the time consistently as HH:mm
++                    return new SimpleDateFormat("HH:mm").format(time);
++                } catch (ParseException e) {
++                    continue;
++                }
++            }
++            return inputTime; // Return original if no format matches
++        } catch (Exception e) {
++            return inputTime; // Return original if parsing fails
++        }
+     }
+ 
+     public String getEventID() {
+@@ -57,12 +136,24 @@
+         this.location = location;
+     }
+ 
++    public String getDate() {
++        return date;
++    }
++
++    public void setDate(String date) {
++        this.date = formatDate(date);
++    }
++
++    public String getTime() {
++        return time != null && !time.isEmpty() ? time : "N/A";
++    }
++
++    public void setTime(String time) {
++        this.time = formatTime(time);
++    }
++
+     public String getDateTime() {
+-        return dateTime;
+-    }
+-
+-    public void setDateTime(String dateTime) {
+-        this.dateTime = dateTime;
++        return date + (time.equals("N/A") ? "" : " " + time);
+     }
+ 
+     public double getCapacity() {
+@@ -82,7 +173,21 @@
+     }
+ 
+     public String getRegisteredStudents() {
+-        return registeredStudents;
++        return registeredStudents != null ? registeredStudents : "";
++    }
++
++    public boolean isStudentRegistered(String username) {
++        if (registeredStudents == null || registeredStudents.isEmpty()) {
++            return false;
++        }
++        // Split by comma and trim each name
++        String[] students = registeredStudents.split(",");
++        for (String student : students) {
++            if (student.trim().equals(username)) {
++                return true;
++            }
++        }
++        return false;
+     }
+ 
+     public void setRegisteredStudents(String registeredStudents) {
+@@ -90,11 +195,11 @@
+     }
+ 
+     public String getType() {
+-        return type;
++        return type != null && !type.equals("default") ? type : "Workshop";
+     }
+ 
+     public void setType(String type) {
+-        this.type = type;
++        this.type = type != null && !type.equals("default") ? type : "Workshop";
+     }
+ 
+     @Override
+@@ -103,7 +208,8 @@
+                 " | Name: " + eventName +
+                 " | Description: " + description +
+                 " | Location: " + location +
+-                " | Date/Time: " + dateTime +
++                " | Date: " + date +
++                " | Time: " + time +
+                 " | Capacity: " + capacity +
+                 " | Cost: " + cost +
+                 " | Students Registered: " + registeredStudents +
+Index: ManagementSystem/src/main/resources/com/example/phase1_1420/user-dashboard-view.fxml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<?import javafx.scene.control.*?>\n<?import javafx.scene.layout.*?>\n<?import javafx.geometry.Insets?>\n<?import javafx.scene.text.Text?>\n<?import javafx.scene.control.*?>\n<?import javafx.scene.layout.*?>\n<?import javafx.geometry.Insets?>\n<?import javafx.scene.text.Text?>\n\n<VBox xmlns=\"http://javafx.com/javafx\"\n      xmlns:fx=\"http://javafx.com/fxml\"\n      fx:controller=\"com.example.phase1_1420.UserDashboardViewController\"\n      spacing=\"15\"\n\n      styleClass=\"dashboard-content\">\n\n    <!-- Student Information Section -->\n    <VBox spacing=\"10\" styleClass=\"info-section\">\n        <Label text=\"Student Information\" styleClass=\"section-header\" />\n        <GridPane hgap=\"10\" vgap=\"10\">\n            <Label text=\"Name:\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"0\" styleClass=\"info-label\" />\n            <Text fx:id=\"studentNameText\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"0\" styleClass=\"info-text\" />\n            \n            <Label text=\"Student ID:\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"1\" styleClass=\"info-label\" />\n            <Text fx:id=\"studentIdText\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"1\" styleClass=\"info-text\" />\n            \n            <Label text=\"Academic Level:\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"2\" styleClass=\"info-label\" />\n            <Text fx:id=\"academicLevelText\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"2\" styleClass=\"info-text\" />\n            \n            <Label text=\"Current Semester:\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"3\" styleClass=\"info-label\" />\n            <Text fx:id=\"currentSemText\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"3\" styleClass=\"info-text\" />\n            \n            <Label text=\"Expected Graduation:\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"4\" styleClass=\"info-label\" />\n            <Text fx:id=\"graduationDateText\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"4\" styleClass=\"info-text\" />\n        </GridPane>\n    </VBox>\n\n    <!-- Academic Progress Section -->\n    <VBox spacing=\"10\" styleClass=\"progress-section\">\n        <Label text=\"Academic Progress\" styleClass=\"section-header\" />\n        <ProgressBar fx:id=\"progressBar\" prefWidth=\"400\" styleClass=\"progress-bar\" />\n        <Label fx:id=\"progressLabel\" styleClass=\"progress-text\" />\n    </VBox>\n\n    <!-- Current Courses Section -->\n    <VBox spacing=\"10\" styleClass=\"courses-section\">\n        <Label text=\"Current Courses\" styleClass=\"section-header\" />\n        <TableView fx:id=\"coursesTable\" prefHeight=\"150\" styleClass=\"data-table\">\n            <columns>\n                <TableColumn fx:id=\"courseCodeColumn\" text=\"Course Code\" />\n                <TableColumn fx:id=\"courseNameColumn\" text=\"Course Name\" />\n                <TableColumn fx:id=\"instructorColumn\" text=\"Instructor\" />\n                <TableColumn fx:id=\"scheduleColumn\" text=\"Schedule\" />\n            </columns>\n        </TableView>\n    </VBox>\n\n    <!-- Registered Events Section -->\n    <VBox spacing=\"10\" styleClass=\"events-section\">\n        <Label text=\"Registered Events\" styleClass=\"section-header\" />\n        <TableView fx:id=\"eventsTable\" prefHeight=\"150\" styleClass=\"data-table\">\n            <columns>\n                <TableColumn fx:id=\"eventNameColumn\" text=\"Event Name\" />\n                <TableColumn fx:id=\"eventDateColumn\" text=\"Date\" />\n                <TableColumn fx:id=\"eventLocationColumn\" text=\"Location\" />\n            </columns>\n        </TableView>\n    </VBox>\n</VBox>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/resources/com/example/phase1_1420/user-dashboard-view.fxml b/ManagementSystem/src/main/resources/com/example/phase1_1420/user-dashboard-view.fxml
+--- a/ManagementSystem/src/main/resources/com/example/phase1_1420/user-dashboard-view.fxml	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/resources/com/example/phase1_1420/user-dashboard-view.fxml	(date 1743706781741)
+@@ -11,7 +11,7 @@
+ 
+ <VBox xmlns="http://javafx.com/javafx"
+       xmlns:fx="http://javafx.com/fxml"
+-      fx:controller="com.example.phase1_1420.UserDashboardViewController"
++      fx:controller="com.example.phase1_1420.UserDashboardController"
+       spacing="15"
+ 
+       styleClass="dashboard-content">
+Index: ManagementSystem/src/main/resources/com/example/phase1_1420/event-management-view.fxml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<?import javafx.geometry.Insets?>\n<?import javafx.scene.control.Button?>\n<?import javafx.scene.control.ComboBox?>\n<?import javafx.scene.control.Label?>\n<?import javafx.scene.control.TableColumn?>\n<?import javafx.scene.control.TableView?>\n<?import javafx.scene.layout.ColumnConstraints?>\n<?import javafx.scene.layout.GridPane?>\n<?import javafx.scene.layout.HBox?>\n<?import javafx.scene.layout.RowConstraints?>\n<?import javafx.scene.layout.VBox?>\n\n<VBox spacing=\"10\" style=\"-fx-background-color: #f4f4f4;\" xmlns=\"http://javafx.com/javafx/23.0.1\" xmlns:fx=\"http://javafx.com/fxml/1\" fx:controller=\"com.example.phase1_1420.EventManagementController\">\n    <padding>\n        <Insets bottom=\"20\" left=\"20\" right=\"20\" top=\"20\" />\n    </padding>\n\n    <!-- List View (Default View) -->\n    <VBox fx:id=\"listView\" spacing=\"10\">\n        <!-- Header -->\n        <HBox alignment=\"CENTER_LEFT\" spacing=\"10\">\n            <Label style=\"-fx-font-size: 24px; -fx-font-weight: bold;\" text=\"Event List\">\n            <padding>\n               <Insets left=\"35.0\" />\n            </padding></Label>\n            <Button fx:id=\"calendarButton\" onAction=\"#handleViewCalendar\" text=\"View Calendar\" />\n        </HBox>\n\n        <!-- Filter Controls -->\n        <HBox alignment=\"CENTER_LEFT\" spacing=\"10\">\n            <Label text=\"Filter by:\" />\n            <ComboBox fx:id=\"eventTypeFilter\" prefWidth=\"150\" promptText=\"Event Type\" />\n            <ComboBox fx:id=\"dateFilter\" prefWidth=\"150\" promptText=\"Date Range\" />\n            <Button fx:id=\"applyFilterButton\" onAction=\"#applyFilters\" text=\"Apply Filters\" />\n            <Button fx:id=\"clearFilterButton\" onAction=\"#clearFilters\" text=\"Clear Filters\" />\n        </HBox>\n\n        <!-- Events Table -->\n        <TableView fx:id=\"eventsTable\" prefHeight=\"300\">\n            <columns>\n                <TableColumn fx:id=\"eventNameColumn\" prefWidth=\"150\" text=\"Event Name\" />\n                <TableColumn fx:id=\"eventDateColumn\" prefWidth=\"100\" text=\"Date\" />\n                <TableColumn fx:id=\"eventTimeColumn\" prefWidth=\"100\" text=\"Time\" />\n                <TableColumn fx:id=\"eventLocationColumn\" prefWidth=\"150\" text=\"Location\" />\n                <TableColumn fx:id=\"eventTypeColumn\" prefWidth=\"100\" text=\"Type\" />\n                <TableColumn fx:id=\"eventCapacityColumn\" prefWidth=\"80\" text=\"Capacity\" />\n            </columns>\n        </TableView>\n\n        <HBox alignment=\"CENTER_RIGHT\" spacing=\"10\">\n            <Button fx:id=\"viewEventDetailsButton\" onAction=\"#handleViewEventDetails\" text=\"View Event Details\" />\n        </HBox>\n    </VBox>\n\n    <!-- Calendar View -->\n    <VBox fx:id=\"calendarView\" managed=\"false\" spacing=\"10\" visible=\"false\">\n        <!-- Header -->\n        <HBox alignment=\"CENTER_LEFT\" spacing=\"10\">\n            <Label style=\"-fx-font-size: 24px; -fx-font-weight: bold;\" text=\"Event Calendar\" />\n            <Button fx:id=\"backToListButton\" onAction=\"#handleBackToList\" text=\"Back to List\" />\n        </HBox>\n\n        <!-- Calendar Grid -->\n        <GridPane fx:id=\"calendarGrid\" hgap=\"5\" style=\"-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1;\" vgap=\"5\">\n            <padding>\n                <Insets bottom=\"10\" left=\"10\" right=\"10\" top=\"10\" />\n            </padding>\n            \n            <!-- Day headers -->\n            <Label style=\"-fx-font-weight: bold;\" text=\"Sun\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"0\" />\n            <Label style=\"-fx-font-weight: bold;\" text=\"Mon\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"0\" />\n            <Label style=\"-fx-font-weight: bold;\" text=\"Tue\" GridPane.columnIndex=\"2\" GridPane.rowIndex=\"0\" />\n            <Label style=\"-fx-font-weight: bold;\" text=\"Wed\" GridPane.columnIndex=\"3\" GridPane.rowIndex=\"0\" />\n            <Label style=\"-fx-font-weight: bold;\" text=\"Thu\" GridPane.columnIndex=\"4\" GridPane.rowIndex=\"0\" />\n            <Label style=\"-fx-font-weight: bold;\" text=\"Fri\" GridPane.columnIndex=\"5\" GridPane.rowIndex=\"0\" />\n            <Label style=\"-fx-font-weight: bold;\" text=\"Sat\" GridPane.columnIndex=\"6\" GridPane.rowIndex=\"0\" />\n         <columnConstraints>\n            <ColumnConstraints />\n            <ColumnConstraints />\n            <ColumnConstraints />\n            <ColumnConstraints />\n            <ColumnConstraints />\n            <ColumnConstraints />\n            <ColumnConstraints />\n         </columnConstraints>\n         <rowConstraints>\n            <RowConstraints />\n         </rowConstraints>\n            \n            <!-- Calendar cells will be populated by controller -->\n        </GridPane>\n\n        <!-- Month Navigation -->\n        <HBox alignment=\"CENTER\" spacing=\"10\">\n            <Button fx:id=\"prevMonthButton\" onAction=\"#handlePrevMonth\" text=\"&lt;\" />\n            <Label fx:id=\"monthYearLabel\" style=\"-fx-font-size: 16px; -fx-font-weight: bold;\" />\n            <Button fx:id=\"nextMonthButton\" onAction=\"#handleNextMonth\" text=\"&gt;\" />\n        </HBox>\n    </VBox>\n\n    <!-- Event Details View -->\n    <VBox fx:id=\"eventDetailsView\" managed=\"false\" spacing=\"10\" visible=\"false\">\n        <!-- Header -->\n        <HBox alignment=\"CENTER_LEFT\" spacing=\"10\">\n            <Label style=\"-fx-font-size: 24px; -fx-font-weight: bold;\" text=\"Event Details\" />\n            <Button fx:id=\"backButton\" onAction=\"#handleBackToList\" text=\"Back to List\" />\n        </HBox>\n\n        <!-- Event Details -->\n        <VBox spacing=\"10\" style=\"-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1;\">\n            <padding>\n                <Insets bottom=\"15\" left=\"15\" right=\"15\" top=\"15\" />\n            </padding>\n            \n            <GridPane hgap=\"10\" vgap=\"10\">\n                <Label style=\"-fx-font-weight: bold;\" text=\"Event Name:\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"0\" />\n                <Label fx:id=\"selectedEventNameText\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"0\" />\n                \n                <Label style=\"-fx-font-weight: bold;\" text=\"Date &amp; Time:\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"1\" />\n                <Label fx:id=\"selectedEventDateTimeText\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"1\" />\n                \n                <Label style=\"-fx-font-weight: bold;\" text=\"Location:\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"2\" />\n                <Label fx:id=\"selectedEventLocationText\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"2\" />\n                \n                <Label style=\"-fx-font-weight: bold;\" text=\"Description:\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"3\" />\n                <Label fx:id=\"selectedEventDescriptionText\" wrapText=\"true\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"3\" />\n                \n                <Label style=\"-fx-font-weight: bold;\" text=\"Type:\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"4\" />\n                <Label fx:id=\"selectedEventTypeText\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"4\" />\n                \n                <Label style=\"-fx-font-weight: bold;\" text=\"Capacity:\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"5\" />\n                <Label fx:id=\"selectedEventCapacityText\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"5\" />\n                \n                <Label style=\"-fx-font-weight: bold;\" text=\"Cost:\" GridPane.columnIndex=\"0\" GridPane.rowIndex=\"6\" />\n                <Label fx:id=\"selectedEventCostText\" GridPane.columnIndex=\"1\" GridPane.rowIndex=\"6\" />\n            <columnConstraints>\n               <ColumnConstraints />\n               <ColumnConstraints />\n            </columnConstraints>\n            <rowConstraints>\n               <RowConstraints />\n               <RowConstraints />\n               <RowConstraints />\n               <RowConstraints />\n               <RowConstraints />\n               <RowConstraints />\n               <RowConstraints />\n            </rowConstraints>\n            </GridPane>\n            \n            <!-- Registration Controls -->\n            <VBox spacing=\"10\" style=\"-fx-background-color: #f9f9f9; -fx-border-color: #ddd; -fx-border-width: 1;\">\n                <padding>\n                    <Insets bottom=\"10\" left=\"10\" right=\"10\" top=\"10\" />\n                </padding>\n                \n                <Label style=\"-fx-font-weight: bold;\" text=\"Your Registration Status:\" />\n                <Label fx:id=\"registrationStatusText\" style=\"-fx-text-fill: #4CAF50;\" />\n                \n                <HBox alignment=\"CENTER_RIGHT\" spacing=\"10\">\n                    <Button fx:id=\"registerButton\" onAction=\"#registerForEvent\" style=\"-fx-background-color: #4CAF50; -fx-text-fill: white;\" text=\"Register\" />\n                    <Button fx:id=\"cancelRegistrationButton\" onAction=\"#cancelRegistration\" style=\"-fx-background-color: #f44336; -fx-text-fill: white;\" text=\"Cancel Registration\" />\n                </HBox>\n            </VBox>\n        </VBox>\n    </VBox>\n</VBox>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/resources/com/example/phase1_1420/event-management-view.fxml b/ManagementSystem/src/main/resources/com/example/phase1_1420/event-management-view.fxml
+--- a/ManagementSystem/src/main/resources/com/example/phase1_1420/event-management-view.fxml	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/resources/com/example/phase1_1420/event-management-view.fxml	(date 1743706768029)
+@@ -1,169 +1,138 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ 
+ <?import javafx.geometry.Insets?>
+-<?import javafx.scene.control.Button?>
+-<?import javafx.scene.control.ComboBox?>
+-<?import javafx.scene.control.Label?>
+-<?import javafx.scene.control.TableColumn?>
+-<?import javafx.scene.control.TableView?>
+-<?import javafx.scene.layout.ColumnConstraints?>
+-<?import javafx.scene.layout.GridPane?>
+-<?import javafx.scene.layout.HBox?>
+-<?import javafx.scene.layout.RowConstraints?>
+-<?import javafx.scene.layout.VBox?>
++<?import javafx.scene.control.*?>
++<?import javafx.scene.layout.*?>
++<?import javafx.scene.text.*?>
+ 
+-<VBox spacing="10" style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.phase1_1420.EventManagementController">
++<VBox xmlns="http://javafx.com/javafx"
++      xmlns:fx="http://javafx.com/fxml"
++      fx:controller="com.example.phase1_1420.EventManagementController"
++      spacing="10"
++      style="-fx-background-color: #f4f4f4;">
+     <padding>
+-        <Insets bottom="20" left="20" right="20" top="20" />
++        <Insets top="20" right="20" bottom="20" left="20"/>
+     </padding>
+ 
+     <!-- List View (Default View) -->
+     <VBox fx:id="listView" spacing="10">
+         <!-- Header -->
+         <HBox alignment="CENTER_LEFT" spacing="10">
+-            <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Event List">
+-            <padding>
+-               <Insets left="35.0" />
+-            </padding></Label>
+-            <Button fx:id="calendarButton" onAction="#handleViewCalendar" text="View Calendar" />
++            <Label text="Event List" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
++            <Button fx:id="calendarButton" text="View Calendar" onAction="#handleViewCalendar"/>
+         </HBox>
+ 
+         <!-- Filter Controls -->
+-        <HBox alignment="CENTER_LEFT" spacing="10">
+-            <Label text="Filter by:" />
+-            <ComboBox fx:id="eventTypeFilter" prefWidth="150" promptText="Event Type" />
+-            <ComboBox fx:id="dateFilter" prefWidth="150" promptText="Date Range" />
+-            <Button fx:id="applyFilterButton" onAction="#applyFilters" text="Apply Filters" />
+-            <Button fx:id="clearFilterButton" onAction="#clearFilters" text="Clear Filters" />
++        <HBox spacing="10" alignment="CENTER_LEFT">
++            <Label text="Filter by:"/>
++            <ComboBox fx:id="eventTypeFilter" promptText="Event Type" prefWidth="150"/>
++            <ComboBox fx:id="dateFilter" promptText="Date Range" prefWidth="150"/>
++            <Button fx:id="applyFilterButton" text="Apply Filters" onAction="#applyFilters"/>
++            <Button fx:id="clearFilterButton" text="Clear Filters" onAction="#clearFilters"/>
+         </HBox>
+ 
+         <!-- Events Table -->
+         <TableView fx:id="eventsTable" prefHeight="300">
+             <columns>
+-                <TableColumn fx:id="eventNameColumn" prefWidth="150" text="Event Name" />
+-                <TableColumn fx:id="eventDateColumn" prefWidth="100" text="Date" />
+-                <TableColumn fx:id="eventTimeColumn" prefWidth="100" text="Time" />
+-                <TableColumn fx:id="eventLocationColumn" prefWidth="150" text="Location" />
+-                <TableColumn fx:id="eventTypeColumn" prefWidth="100" text="Type" />
+-                <TableColumn fx:id="eventCapacityColumn" prefWidth="80" text="Capacity" />
++                <TableColumn fx:id="eventNameColumn" text="Event Name" prefWidth="150"/>
++                <TableColumn fx:id="eventDateColumn" text="Date" prefWidth="100"/>
++                <TableColumn fx:id="eventTimeColumn" text="Time" prefWidth="100"/>
++                <TableColumn fx:id="eventLocationColumn" text="Location" prefWidth="150"/>
++                <TableColumn fx:id="eventTypeColumn" text="Type" prefWidth="100"/>
++                <TableColumn fx:id="eventCapacityColumn" text="Capacity" prefWidth="80"/>
+             </columns>
+         </TableView>
+ 
+-        <HBox alignment="CENTER_RIGHT" spacing="10">
+-            <Button fx:id="viewEventDetailsButton" onAction="#handleViewEventDetails" text="View Event Details" />
++        <HBox spacing="10" alignment="CENTER_RIGHT">
++            <Button fx:id="viewEventDetailsButton" text="View Event Details" onAction="#handleViewEventDetails"/>
+         </HBox>
+     </VBox>
+ 
+     <!-- Calendar View -->
+-    <VBox fx:id="calendarView" managed="false" spacing="10" visible="false">
++    <VBox fx:id="calendarView" spacing="10" visible="false" managed="false">
+         <!-- Header -->
+         <HBox alignment="CENTER_LEFT" spacing="10">
+-            <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Event Calendar" />
+-            <Button fx:id="backToListButton" onAction="#handleBackToList" text="Back to List" />
++            <Label text="Event Calendar" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
++            <Button fx:id="backToListButton" text="Back to List" onAction="#handleBackToList"/>
+         </HBox>
+ 
+         <!-- Calendar Grid -->
+-        <GridPane fx:id="calendarGrid" hgap="5" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1;" vgap="5">
++        <GridPane fx:id="calendarGrid" hgap="5" vgap="5" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1;">
+             <padding>
+-                <Insets bottom="10" left="10" right="10" top="10" />
++                <Insets top="10" right="10" bottom="10" left="10"/>
+             </padding>
+             
+             <!-- Day headers -->
+-            <Label style="-fx-font-weight: bold;" text="Sun" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+-            <Label style="-fx-font-weight: bold;" text="Mon" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+-            <Label style="-fx-font-weight: bold;" text="Tue" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+-            <Label style="-fx-font-weight: bold;" text="Wed" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+-            <Label style="-fx-font-weight: bold;" text="Thu" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+-            <Label style="-fx-font-weight: bold;" text="Fri" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+-            <Label style="-fx-font-weight: bold;" text="Sat" GridPane.columnIndex="6" GridPane.rowIndex="0" />
+-         <columnConstraints>
+-            <ColumnConstraints />
+-            <ColumnConstraints />
+-            <ColumnConstraints />
+-            <ColumnConstraints />
+-            <ColumnConstraints />
+-            <ColumnConstraints />
+-            <ColumnConstraints />
+-         </columnConstraints>
+-         <rowConstraints>
+-            <RowConstraints />
+-         </rowConstraints>
++            <Label text="Sun" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
++            <Label text="Mon" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-weight: bold;"/>
++            <Label text="Tue" GridPane.rowIndex="0" GridPane.columnIndex="2" style="-fx-font-weight: bold;"/>
++            <Label text="Wed" GridPane.rowIndex="0" GridPane.columnIndex="3" style="-fx-font-weight: bold;"/>
++            <Label text="Thu" GridPane.rowIndex="0" GridPane.columnIndex="4" style="-fx-font-weight: bold;"/>
++            <Label text="Fri" GridPane.rowIndex="0" GridPane.columnIndex="5" style="-fx-font-weight: bold;"/>
++            <Label text="Sat" GridPane.rowIndex="0" GridPane.columnIndex="6" style="-fx-font-weight: bold;"/>
+             
+             <!-- Calendar cells will be populated by controller -->
+         </GridPane>
+ 
+         <!-- Month Navigation -->
+-        <HBox alignment="CENTER" spacing="10">
+-            <Button fx:id="prevMonthButton" onAction="#handlePrevMonth" text="&lt;" />
+-            <Label fx:id="monthYearLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+-            <Button fx:id="nextMonthButton" onAction="#handleNextMonth" text="&gt;" />
++        <HBox spacing="10" alignment="CENTER">
++            <Button fx:id="prevMonthButton" text="&lt;" onAction="#handlePrevMonth"/>
++            <Label fx:id="monthYearLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
++            <Button fx:id="nextMonthButton" text="&gt;" onAction="#handleNextMonth"/>
+         </HBox>
+     </VBox>
+ 
+     <!-- Event Details View -->
+-    <VBox fx:id="eventDetailsView" managed="false" spacing="10" visible="false">
++    <VBox fx:id="eventDetailsView" spacing="10" visible="false" managed="false">
+         <!-- Header -->
+         <HBox alignment="CENTER_LEFT" spacing="10">
+-            <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Event Details" />
+-            <Button fx:id="backButton" onAction="#handleBackToList" text="Back to List" />
++            <Label text="Event Details" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
++            <Button fx:id="backButton" text="Back to List" onAction="#handleBackToList"/>
+         </HBox>
+ 
+         <!-- Event Details -->
+         <VBox spacing="10" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1;">
+             <padding>
+-                <Insets bottom="15" left="15" right="15" top="15" />
++                <Insets top="15" right="15" bottom="15" left="15"/>
+             </padding>
+             
+             <GridPane hgap="10" vgap="10">
+-                <Label style="-fx-font-weight: bold;" text="Event Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+-                <Label fx:id="selectedEventNameText" GridPane.columnIndex="1" GridPane.rowIndex="0" />
++                <Label text="Event Name:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
++                <Label fx:id="selectedEventNameText" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                 
+-                <Label style="-fx-font-weight: bold;" text="Date &amp; Time:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+-                <Label fx:id="selectedEventDateTimeText" GridPane.columnIndex="1" GridPane.rowIndex="1" />
++                <Label text="Date &amp; Time:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
++                <Label fx:id="selectedEventDateTimeText" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                 
+-                <Label style="-fx-font-weight: bold;" text="Location:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+-                <Label fx:id="selectedEventLocationText" GridPane.columnIndex="1" GridPane.rowIndex="2" />
++                <Label text="Location:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
++                <Label fx:id="selectedEventLocationText" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                 
+-                <Label style="-fx-font-weight: bold;" text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+-                <Label fx:id="selectedEventDescriptionText" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
++                <Label text="Description:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
++                <Label fx:id="selectedEventDescriptionText" GridPane.rowIndex="3" GridPane.columnIndex="1" wrapText="true"/>
+                 
+-                <Label style="-fx-font-weight: bold;" text="Type:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+-                <Label fx:id="selectedEventTypeText" GridPane.columnIndex="1" GridPane.rowIndex="4" />
++                <Label text="Type:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
++                <Label fx:id="selectedEventTypeText" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                 
+-                <Label style="-fx-font-weight: bold;" text="Capacity:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+-                <Label fx:id="selectedEventCapacityText" GridPane.columnIndex="1" GridPane.rowIndex="5" />
++                <Label text="Capacity:" GridPane.rowIndex="5" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
++                <Label fx:id="selectedEventCapacityText" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                 
+-                <Label style="-fx-font-weight: bold;" text="Cost:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+-                <Label fx:id="selectedEventCostText" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+-            <columnConstraints>
+-               <ColumnConstraints />
+-               <ColumnConstraints />
+-            </columnConstraints>
+-            <rowConstraints>
+-               <RowConstraints />
+-               <RowConstraints />
+-               <RowConstraints />
+-               <RowConstraints />
+-               <RowConstraints />
+-               <RowConstraints />
+-               <RowConstraints />
+-            </rowConstraints>
++                <Label text="Cost:" GridPane.rowIndex="6" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
++                <Label fx:id="selectedEventCostText" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+             </GridPane>
+             
+             <!-- Registration Controls -->
+             <VBox spacing="10" style="-fx-background-color: #f9f9f9; -fx-border-color: #ddd; -fx-border-width: 1;">
+                 <padding>
+-                    <Insets bottom="10" left="10" right="10" top="10" />
++                    <Insets top="10" right="10" bottom="10" left="10"/>
+                 </padding>
+                 
+-                <Label style="-fx-font-weight: bold;" text="Your Registration Status:" />
+-                <Label fx:id="registrationStatusText" style="-fx-text-fill: #4CAF50;" />
++                <Label text="Your Registration Status:" style="-fx-font-weight: bold;"/>
++                <Label fx:id="registrationStatusText" style="-fx-text-fill: #4CAF50;"/>
+                 
+-                <HBox alignment="CENTER_RIGHT" spacing="10">
+-                    <Button fx:id="registerButton" onAction="#registerForEvent" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Register" />
+-                    <Button fx:id="cancelRegistrationButton" onAction="#cancelRegistration" style="-fx-background-color: #f44336; -fx-text-fill: white;" text="Cancel Registration" />
++                <HBox spacing="10" alignment="CENTER_RIGHT">
++                    <Button fx:id="registerButton" text="Register" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" onAction="#registerForEvent"/>
++                    <Button fx:id="cancelRegistrationButton" text="Cancel Registration" style="-fx-background-color: #f44336; -fx-text-fill: white;" onAction="#cancelRegistration"/>
+                 </HBox>
+             </VBox>
+         </VBox>
+     </VBox>
+-</VBox>
++</VBox> 
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"695edb3f-5990-4e7d-9437-02fba9d60a2e\" name=\"Changes\" comment=\"i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/ExcelFile.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/ExcelFile.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyManagementController.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyManagementController.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Student.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Student.java\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"ExportToHTMLSettings\">\n    <option name=\"OUTPUT_DIRECTORY\" value=\"$PROJECT_DIR$/exportToHTML\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Class\" />\n        <option value=\"FxmlFile\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"GitHubPullRequestSearchHistory\">{\n  &quot;lastFilter&quot;: {\n    &quot;state&quot;: &quot;OPEN&quot;,\n    &quot;assignee&quot;: &quot;Tami-123&quot;\n  }\n}</component>\n  <component name=\"GithubPullRequestsUISettings\"><![CDATA[{\n  \"selectedUrlAndAccountId\": {\n    \"url\": \"https://github.com/Smunk3y/ENGG1420G33.git\",\n    \"accountId\": \"25501fd1-24f6-4f1f-ba15-3bbe1ec60835\"\n  }\n}]]></component>\n  <component name=\"ProblemsViewState\">\n    <option name=\"selectedTabId\" value=\"ProjectErrors\" />\n  </component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;associatedIndex&quot;: 0\n}</component>\n  <component name=\"ProjectId\" id=\"2vCnjkJWqxKTduS72q6e3BNQkJ9\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"Application.MainApp.executor\": \"Run\",\n    \"Application.TestExcelReading.executor\": \"Run\",\n    \"JUnit.All in ENGG1420-Group33-Phase1.executor\": \"Run\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"RunOnceActivity.git.unshallow\": \"true\",\n    \"git-widget-placeholder\": \"main\",\n    \"ignore.virus.scanning.warn.message\": \"true\",\n    \"kotlin-language-version-configured\": \"true\",\n    \"node.js.detected.package.eslint\": \"true\",\n    \"node.js.detected.package.tslint\": \"true\",\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\n    \"nodejs_package_manager_path\": \"npm\",\n    \"vue.rearranger.settings.migration\": \"true\"\n  }\n}]]></component>\n  <component name=\"RecentsManager\">\n    <key name=\"MoveFile.RECENT_KEYS\">\n      <recent name=\"C:\\Users\\adeni\\IdeaProjects\\ENGG1420G33\\ManagementSystem\\src\\main\\resources\\com\\example\\phase1_1420\" />\n      <recent name=\"$PROJECT_DIR$/ManagementSystem/src/main/resources/com/example/phase1_1420\" />\n      <recent name=\"$PROJECT_DIR$/ManagementSystem/src/main/resources\" />\n      <recent name=\"$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420\" />\n    </key>\n  </component>\n  <component name=\"RunManager\" selected=\"Application.MainApp\">\n    <configuration name=\"MainApp\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <option name=\"MAIN_CLASS_NAME\" value=\"com.example.phase1_1420.MainApp\" />\n      <module name=\"ENGG1420-Group33-Phase1\" />\n      <extension name=\"coverage\">\n        <pattern>\n          <option name=\"PATTERN\" value=\"com.example.phase1_1420.*\" />\n          <option name=\"ENABLED\" value=\"true\" />\n        </pattern>\n      </extension>\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <configuration name=\"All in ENGG1420-Group33-Phase1\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"ENGG1420-Group33-Phase1\" />\n      <option name=\"PACKAGE_NAME\" value=\"\" />\n      <option name=\"TEST_OBJECT\" value=\"package\" />\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Application.MainApp\" />\n        <item itemvalue=\"JUnit.All in ENGG1420-Group33-Phase1\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task id=\"LOCAL-00001\" summary=\"pull\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1743457161310</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1743457161310</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"Homepage for users (student login). display student courses and information (wip).\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1743577498116</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1743577498116</updated>\n    </task>\n    <task id=\"LOCAL-00003\" summary=\"Fixed course management module for students when the same course would be repeated for all sections.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1743640816014</created>\n      <option name=\"number\" value=\"00003\" />\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1743640816014</updated>\n    </task>\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"695edb3f-5990-4e7d-9437-02fba9d60a2e\" name=\"Changes\" comment=\"Fixed course management module for students when the same course would be repeated for all sections.\" />\n      <created>1743658060586</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1743658060586</updated>\n      <workItem from=\"1743664648976\" duration=\"6970000\" />\n    </task>\n    <task id=\"LOCAL-00004\" summary=\"i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1743658482386</created>\n      <option name=\"number\" value=\"00004\" />\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1743658482386</updated>\n    </task>\n    <task id=\"LOCAL-00005\" summary=\"i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1743680864618</created>\n      <option name=\"number\" value=\"00005\" />\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1743680864618</updated>\n    </task>\n    <task id=\"LOCAL-00006\" summary=\"i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1743681057872</created>\n      <option name=\"number\" value=\"00006\" />\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1743681057872</updated>\n    </task>\n    <task id=\"LOCAL-00007\" summary=\"i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1743681279285</created>\n      <option name=\"number\" value=\"00007\" />\n      <option name=\"presentableId\" value=\"LOCAL-00007\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1743681279285</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"8\" />\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"pull\" />\n    <MESSAGE value=\"Homepage for users (student login). display student courses and information (wip).\" />\n    <MESSAGE value=\"Fixed course management module for students when the same course would be repeated for all sections.\" />\n    <MESSAGE value=\"i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController\" />\n  </component>\n  <component name=\"XDebuggerManager\">\n    <breakpoint-manager>\n      <breakpoints>\n        <breakpoint enabled=\"true\" type=\"java-exception\">\n          <properties class=\"java.io.FileNotFoundException\" package=\"java.io\" />\n          <option name=\"timeStamp\" value=\"1\" />\n        </breakpoint>\n      </breakpoints>\n    </breakpoint-manager>\n  </component>\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\n    <SUITE FILE_PATH=\"coverage/ENGG1420G33$MainApp.ic\" NAME=\"MainApp Coverage Results\" MODIFIED=\"1743465847175\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"idea\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"true\">\n      <FILTER>com.example.phase1_1420.*</FILTER>\n    </SUITE>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/.idea/workspace.xml	(date 1743706799290)
+@@ -4,11 +4,24 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="695edb3f-5990-4e7d-9437-02fba9d60a2e" name="Changes" comment="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
++    <list default="true" id="695edb3f-5990-4e7d-9437-02fba9d60a2e" name="Changes" comment="Fixed course management module for students when the same course would be repeated for all sections.">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/UMS_Data.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/UMS_Data.xlsx" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/AdminDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/AdminDashboardController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Course.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Course.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/CourseManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/CourseManagementController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Event.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Event.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/EventManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/EventManagementController.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/ExcelFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/ExcelFile.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyManagementController.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Student.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/Student.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/FacultyDashboardController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/LoginController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UMS_Data.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UMS_Data.xlsx" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UserDashboardViewController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UserDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420/UserDatabase.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/resources/UMS_Data.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/resources/UMS_Data.xlsx" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/resources/com/example/phase1_1420/event-management-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/resources/com/example/phase1_1420/event-management-view.fxml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ManagementSystem/src/main/resources/com/example/phase1_1420/user-dashboard-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/ManagementSystem/src/main/resources/com/example/phase1_1420/user-dashboard-view.fxml" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -18,61 +31,22 @@
+   <component name="ExportToHTMLSettings">
+     <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/exportToHTML" />
+   </component>
+-  <component name="FileTemplateManagerImpl">
+-    <option name="RECENT_TEMPLATES">
+-      <list>
+-        <option value="Class" />
+-        <option value="FxmlFile" />
+-      </list>
+-    </option>
+-  </component>
+   <component name="Git.Settings">
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+   </component>
+-  <component name="GitHubPullRequestSearchHistory">{
+-  &quot;lastFilter&quot;: {
+-    &quot;state&quot;: &quot;OPEN&quot;,
+-    &quot;assignee&quot;: &quot;Tami-123&quot;
+-  }
+-}</component>
+-  <component name="GithubPullRequestsUISettings"><![CDATA[{
+-  "selectedUrlAndAccountId": {
+-    "url": "https://github.com/Smunk3y/ENGG1420G33.git",
+-    "accountId": "25501fd1-24f6-4f1f-ba15-3bbe1ec60835"
+-  }
+-}]]></component>
+   <component name="ProblemsViewState">
+-    <option name="selectedTabId" value="ProjectErrors" />
++    <option name="selectedTabId" value="CurrentFile" />
+   </component>
+-  <component name="ProjectColorInfo">{
+-  &quot;associatedIndex&quot;: 0
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;Application.MainApp.executor&quot;: &quot;Run&quot;,
++    &quot;Application.TestExcelReading.executor&quot;: &quot;Run&quot;,
++    &quot;JUnit.All in ENGG1420-Group33-Phase1.executor&quot;: &quot;Run&quot;,
++    &quot;git-widget-placeholder&quot;: &quot;main&quot;
++  }
+ }</component>
+-  <component name="ProjectId" id="2vCnjkJWqxKTduS72q6e3BNQkJ9" />
+-  <component name="ProjectViewState">
+-    <option name="hideEmptyMiddlePackages" value="true" />
+-    <option name="showLibraryContents" value="true" />
+-  </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "Application.MainApp.executor": "Run",
+-    "Application.TestExcelReading.executor": "Run",
+-    "JUnit.All in ENGG1420-Group33-Phase1.executor": "Run",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "RunOnceActivity.git.unshallow": "true",
+-    "git-widget-placeholder": "main",
+-    "ignore.virus.scanning.warn.message": "true",
+-    "kotlin-language-version-configured": "true",
+-    "node.js.detected.package.eslint": "true",
+-    "node.js.detected.package.tslint": "true",
+-    "node.js.selected.package.eslint": "(autodetect)",
+-    "node.js.selected.package.tslint": "(autodetect)",
+-    "nodejs_package_manager_path": "npm",
+-    "vue.rearranger.settings.migration": "true"
+-  }
+-}]]></component>
+   <component name="RecentsManager">
+     <key name="MoveFile.RECENT_KEYS">
+-      <recent name="C:\Users\adeni\IdeaProjects\ENGG1420G33\ManagementSystem\src\main\resources\com\example\phase1_1420" />
+       <recent name="$PROJECT_DIR$/ManagementSystem/src/main/resources/com/example/phase1_1420" />
+       <recent name="$PROJECT_DIR$/ManagementSystem/src/main/resources" />
+       <recent name="$PROJECT_DIR$/ManagementSystem/src/main/java/com/example/phase1_1420" />
+@@ -107,7 +81,6 @@
+       </list>
+     </recent_temporary>
+   </component>
+-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="TaskManager">
+     <task id="LOCAL-00001" summary="pull">
+       <option name="closed" value="true" />
+@@ -133,52 +106,9 @@
+       <option name="project" value="LOCAL" />
+       <updated>1743640816014</updated>
+     </task>
+-    <task active="true" id="Default" summary="Default task">
+-      <changelist id="695edb3f-5990-4e7d-9437-02fba9d60a2e" name="Changes" comment="Fixed course management module for students when the same course would be repeated for all sections." />
+-      <created>1743658060586</created>
+-      <option name="number" value="Default" />
+-      <option name="presentableId" value="Default" />
+-      <updated>1743658060586</updated>
+-      <workItem from="1743664648976" duration="6970000" />
+-    </task>
+-    <task id="LOCAL-00004" summary="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
+-      <option name="closed" value="true" />
+-      <created>1743658482386</created>
+-      <option name="number" value="00004" />
+-      <option name="presentableId" value="LOCAL-00004" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1743658482386</updated>
+-    </task>
+-    <task id="LOCAL-00005" summary="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
+-      <option name="closed" value="true" />
+-      <created>1743680864618</created>
+-      <option name="number" value="00005" />
+-      <option name="presentableId" value="LOCAL-00005" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1743680864618</updated>
+-    </task>
+-    <task id="LOCAL-00006" summary="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
+-      <option name="closed" value="true" />
+-      <created>1743681057872</created>
+-      <option name="number" value="00006" />
+-      <option name="presentableId" value="LOCAL-00006" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1743681057872</updated>
+-    </task>
+-    <task id="LOCAL-00007" summary="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController">
+-      <option name="closed" value="true" />
+-      <created>1743681279285</created>
+-      <option name="number" value="00007" />
+-      <option name="presentableId" value="LOCAL-00007" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1743681279285</updated>
+-    </task>
+-    <option name="localTasksCounter" value="8" />
++    <option name="localTasksCounter" value="4" />
+     <servers />
+   </component>
+-  <component name="TypeScriptGeneratedFilesManager">
+-    <option name="version" value="3" />
+-  </component>
+   <component name="Vcs.Log.Tabs.Properties">
+     <option name="TAB_STATES">
+       <map>
+@@ -194,8 +124,7 @@
+     <MESSAGE value="pull" />
+     <MESSAGE value="Homepage for users (student login). display student courses and information (wip)." />
+     <MESSAGE value="Fixed course management module for students when the same course would be repeated for all sections." />
+-    <MESSAGE value="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController" />
+-    <option name="LAST_COMMIT_MESSAGE" value="i j=changed the og Student.java code and add a controller and fxml file both named StudentManagement then i added the ActionEvent event in the handlestudent method of AdminDashboardController" />
++    <option name="LAST_COMMIT_MESSAGE" value="Fixed course management module for students when the same course would be repeated for all sections." />
+   </component>
+   <component name="XDebuggerManager">
+     <breakpoint-manager>
+Index: ManagementSystem/src/main/java/com/example/phase1_1420/UserDatabase.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.phase1_1420;\n\nimport java.util.HashMap;\nimport java.util.Map;\n\n/**\n * User Database that handles authentication and user role management (admin, or user / student).\n */\npublic class UserDatabase {\n\n    private static final Map<String, User> userMap = new HashMap<>();\n\n    public static User CurrentUser = null;\n\n    static {\n\n        //Read Excel Sheet for Students & populate into map\n        try {\n            ExcelFile reader = new ExcelFile();\n            reader.ReadingNameExcelFile();\n\n            for (Student student : reader.studentList) {\n                userMap.put(student.getId(), student);\n            }\n            for (Faculty faculty : reader.facultyList){\n                userMap.put(faculty.getId(), faculty);\n            }\n        } catch (Exception e) {\n            e.printStackTrace();\n        }\n\n\n        // Admin\n        userMap.put(\"ADMIN\", new User(\"ADMIN001\", \"admin123\", \"admin\", \"ADMIN\", \"admin@uofg.com\"));\n\n        // User -- Delete default user because it's useless for devlopment now\n        //userMap.put(\"USER\", new User(\"USER001\", \"user123\", \"user\", \"USER\", \"user@uofg.com\"));\n    }\n\n    public static String authenticate(String username, String password) {\n        //TO upper case to remove case sensitivty for login id\n        User user = userMap.get(username.toUpperCase());\n        if (user != null && user.getPassword().equals(password)) {\n            CurrentUser = user;\n            return (CurrentUser.role);\n        }\n        return null;\n    }\n\n    public static String getDisplayName(String username) {\n        User user = userMap.get(username);\n        return (user != null) ? user.getId() : \"Unknown\";\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ManagementSystem/src/main/java/com/example/phase1_1420/UserDatabase.java b/ManagementSystem/src/main/java/com/example/phase1_1420/UserDatabase.java
+--- a/ManagementSystem/src/main/java/com/example/phase1_1420/UserDatabase.java	(revision 4a1ba8284e3dd4891f1e1a2b17d214f3c977e28c)
++++ b/ManagementSystem/src/main/java/com/example/phase1_1420/UserDatabase.java	(date 1743706787237)
+@@ -12,6 +12,9 @@
+ 
+     public static User CurrentUser = null;
+ 
++    // Track changes to event registrations during the application session
++    private static final java.util.Map<String, java.util.Set<String>> removedRegistrations = new java.util.HashMap<>();
++
+     static {
+ 
+         //Read Excel Sheet for Students & populate into map
+@@ -51,4 +54,79 @@
+         User user = userMap.get(username);
+         return (user != null) ? user.getId() : "Unknown";
+     }
++
++    /**
++     * Refreshes the user database with the latest data from the Excel file.
++     * This ensures that any changes made during the session are reflected when users log in.
++     *
++     * @param excelFile The Excel file reader with the latest data
++     */
++    public static void refreshUserData(ExcelFile excelFile) {
++        // Clear the existing user map (except admin)
++        User adminUser = userMap.get("ADMIN");
++        userMap.clear();
++        
++        // Re-add the admin user
++        if (adminUser != null) {
++            userMap.put("ADMIN", adminUser);
++        } else {
++            // Create default admin if it doesn't exist
++            userMap.put("ADMIN", new User("ADMIN001", "admin123", "admin", "ADMIN", "admin@uofg.com"));
++        }
++        
++        // Add all students from the Excel file
++        for (Student student : excelFile.studentList) {
++            userMap.put(student.getId(), student);
++        }
++        
++        // Add all faculty from the Excel file
++        for (Faculty faculty : excelFile.facultyList) {
++            userMap.put(faculty.getId(), faculty);
++        }
++        
++        System.out.println("User database refreshed:");
++        System.out.println("- Students: " + excelFile.studentList.size());
++        System.out.println("- Faculty: " + excelFile.facultyList.size());
++        System.out.println("- Total users: " + userMap.size());
++    }
++
++    /**
++     * Records when a student's registration is removed from an event during the current session
++     * @param eventId The ID of the event
++     * @param username The username of the student removed from the event
++     */
++    public static void trackRemovedRegistration(String eventId, String username) {
++        if (!removedRegistrations.containsKey(eventId)) {
++            removedRegistrations.put(eventId, new java.util.HashSet<>());
++        }
++        removedRegistrations.get(eventId).add(username);
++        System.out.println("Tracking removed registration: " + username + " from event " + eventId);
++    }
++    
++    /**
++     * Checks if a student was removed from an event during the current session
++     * @param eventId The ID of the event
++     * @param username The username of the student
++     * @return true if the student was removed from the event during the current session
++     */
++    public static boolean wasRegistrationRemoved(String eventId, String username) {
++        return removedRegistrations.containsKey(eventId) && 
++               removedRegistrations.get(eventId).contains(username);
++    }
++    
++    /**
++     * Clears the tracking of removed registrations for a student
++     * This would be called when a student re-registers for an event
++     * @param eventId The ID of the event
++     * @param username The username of the student
++     */
++    public static void clearRemovedRegistration(String eventId, String username) {
++        if (removedRegistrations.containsKey(eventId)) {
++            removedRegistrations.get(eventId).remove(username);
++            if (removedRegistrations.get(eventId).isEmpty()) {
++                removedRegistrations.remove(eventId);
++            }
++            System.out.println("Cleared removed registration tracking: " + username + " for event " + eventId);
++        }
++    }
+ }
+\ No newline at end of file

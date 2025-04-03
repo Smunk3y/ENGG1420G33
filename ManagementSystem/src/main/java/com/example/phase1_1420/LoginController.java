@@ -24,10 +24,14 @@ public class LoginController {
         String username = userField.getText();
         String password = passField.getText();
 
-        ExcelFile a = new ExcelFile();
-        a.ReadingNameExcelFile();
+        // Create a new Excel file reader and load all data
+        ExcelFile excelFile = new ExcelFile();
+        excelFile.ReadingNameExcelFile();
+        
+        // Ensure the UserDatabase has the latest data
+        UserDatabase.refreshUserData(excelFile);
 
-
+        // Try to authenticate the user
         String role = UserDatabase.authenticate(username, password);
 
         if (role != null) {
@@ -40,7 +44,6 @@ public class LoginController {
 
             if (failedAttempts >= MAX_ATTEMPTS) {
                 errorLabel.setText("Too many failed Login attempts! Please Try again later. Closing login screen.");
-
 
                 PauseTransition delay = new PauseTransition(Duration.seconds(5));
                 delay.setOnFinished(e -> System.exit(0));
