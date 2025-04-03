@@ -88,61 +88,61 @@ public class Student extends User {
 
 
     // --- Excel File Management Methods ---
-    public static List<Student> loadStudentsFromExcel(String filePath) {
-        List<Student> students = new ArrayList<>();
-        try (FileInputStream fis = new FileInputStream(filePath);
-             Workbook workbook = new XSSFWorkbook(fis)) {
-            Sheet sheet = workbook.getSheetAt(0);
+//    public static List<Student> loadStudentsFromExcel(String filePath) {
+//        List<Student> students = new ArrayList<>();
+//        try (FileInputStream fis = new FileInputStream(filePath);
+//             Workbook workbook = new XSSFWorkbook(fis)) {
+//            Sheet sheet = workbook.getSheetAt(0);
+//
+//
+//            for (Row row : sheet) {
+//                if (row.getRowNum() == 0) continue; // Skip header row
+//
+//
+//                Student student = new Student(
+//                        row.getCell(0).getStringCellValue(),
+//                        "", // Password not stored in Excel for security
+//                        row.getCell(1).getStringCellValue(),
+//                        row.getCell(2).getStringCellValue(),
+//                        "", "", "",
+//                        row.getCell(3).getStringCellValue(),
+//                        "", "", row.getCell(4).getNumericCellValue(), ""
+//                );
+//                students.add(student);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return students;
+//    }
 
 
-            for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Skip header row
-
-
-                Student student = new Student(
-                        row.getCell(0).getStringCellValue(),
-                        "", // Password not stored in Excel for security
-                        row.getCell(1).getStringCellValue(),
-                        row.getCell(2).getStringCellValue(),
-                        "", "", "",
-                        row.getCell(3).getStringCellValue(),
-                        "", "", row.getCell(4).getNumericCellValue(), ""
-                );
-                students.add(student);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return students;
-    }
-
-
-    public static void saveStudentsToExcel(String filePath, List<Student> students) {
-        try (Workbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Students");
-            Row headerRow = sheet.createRow(0);
-            String[] headers = {"ID", "Name", "Email", "Semester", "Progress"};
-            for (int i = 0; i < headers.length; i++) {
-                headerRow.createCell(i).setCellValue(headers[i]);
-            }
-
-
-            int rowNum = 1;
-            for (Student student : students) {
-                Row row = sheet.createRow(rowNum++);
-                row.createCell(0).setCellValue(student.getId());
-                row.createCell(1).setCellValue(student.getUsername());
-                row.createCell(2).setCellValue(student.getEmail());
-                row.createCell(3).setCellValue(student.getCurrentSem());
-                row.createCell(4).setCellValue(student.getProgress());
-            }
-
-
-            try (FileOutputStream fos = new FileOutputStream(filePath)) {
-                workbook.write(fos);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void saveStudentsToExcel(String filePath, List<Student> students) {
+//        try (Workbook workbook = new XSSFWorkbook()) {
+//            Sheet sheet = workbook.createSheet("Students");
+//            Row headerRow = sheet.createRow(0);
+//            String[] headers = {"ID", "Name", "Email", "Semester", "Progress"};
+//            for (int i = 0; i < headers.length; i++) {
+//                headerRow.createCell(i).setCellValue(headers[i]);
+//            }
+//
+//
+//            int rowNum = 1;
+//            for (Student student : students) {
+//                Row row = sheet.createRow(rowNum++);
+//                row.createCell(0).setCellValue(student.getId());
+//                row.createCell(1).setCellValue(student.getUsername());
+//                row.createCell(2).setCellValue(student.getEmail());
+//                row.createCell(3).setCellValue(student.getCurrentSem());
+//                row.createCell(4).setCellValue(student.getProgress());
+//            }
+//
+//
+//            try (FileOutputStream fos = new FileOutputStream(filePath)) {
+//                workbook.write(fos);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

@@ -9,10 +9,9 @@ public class Faculty extends User {
     private String degree;
 
     public Faculty(String id, String password, String username, String email,
-                   String department, String researchArea,
-                   String officeLocation, String coursesOffered, String degree) {
+                   String degree, String researchArea,
+                   String officeLocation, String coursesOffered) {
         super(id, password, username, "FACULTY", email);
-        this.department = department;
         this.researchArea = researchArea;
         this.officeLocation = officeLocation;
         this.coursesOffered = coursesOffered;

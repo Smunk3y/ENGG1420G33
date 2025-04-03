@@ -1,48 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox spacing="10" xmlns="http://javafx.com/javafx/23.0.1"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.example.phase1_1420.FacultyManagementController">
+<VBox spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.phase1_1420.FacultyManagementController">
 
     <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
+        <Insets bottom="10" left="10" right="10" top="10" />
     </padding>
 
-    <Label text="Faculty Management"
-           style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+    <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Faculty Management">
+      <padding>
+         <Insets left="35.0" />
+      </padding></Label>
 
     <!-- Input Fields -->
     <HBox spacing="10">
-        <TextField fx:id="idField" promptText="Faculty ID"/>
-        <TextField fx:id="nameField" promptText="Name"/>
-        <TextField fx:id="emailField" promptText="Email"/>
+        <TextField fx:id="nameField" promptText="Name" />
+        <TextField fx:id="emailField" promptText="Email" />
     </HBox>
 
     <HBox spacing="10">
-        <TextField fx:id="departmentField" promptText="Department"/>
-        <TextField fx:id="researchAreaField" promptText="Research Area"/>
-        <PasswordField fx:id="passwordField" promptText="Password"/>
+        <TextField fx:id="degreeField" promptText="Degree" />
+        <TextField fx:id="researchAreaField" promptText="Research Area" />
+        <TextField fx:id="passwordField" accessibleRole="TEXT_FIELD" promptText="Password" />
     </HBox>
 
     <!-- Action Buttons -->
     <HBox spacing="10">
-        <Button text="Add" onAction="#handleAdd" />
-        <Button text="Edit" onAction="#handleEdit" />
-        <Button text="Delete" onAction="#handleDelete" />
+        <Button fx:id="addButton" onAction="#handleAdd" text="Add" />
+        <Button fx:id="editButton" onAction="#handleEdit" text="Edit" />
+        <Button fx:id="deleteButton" onAction="#handleDelete" text="Delete" />
+      <Button fx:id="clearSelectionButton" onAction="#clearSelections" text="Clear Selection" />
     </HBox>
 
     <!-- Faculty Table -->
     <TableView fx:id="facultyTable" prefHeight="300">
         <columns>
-            <TableColumn fx:id="idColumn" text="ID" prefWidth="100"/>
-            <TableColumn fx:id="nameColumn" text="Name" prefWidth="150"/>
-            <TableColumn fx:id="emailColumn" text="Email" prefWidth="150"/>
-            <TableColumn fx:id="departmentColumn" text="Department" prefWidth="120"/>
-            <TableColumn fx:id="researchAreaColumn" text="Research Area" prefWidth="150"/>
+            <TableColumn fx:id="idColumn" prefWidth="100" text="ID" />
+            <TableColumn fx:id="nameColumn" prefWidth="150" text="Name" />
+            <TableColumn fx:id="emailColumn" prefWidth="150" text="Email" />
+            <TableColumn fx:id="degreeColumn" prefWidth="120" text="Degree" />
+            <TableColumn fx:id="researchAreaColumn" prefWidth="150" text="Research Area" />
         </columns>
     </TableView>
 

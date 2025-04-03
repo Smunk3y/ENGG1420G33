@@ -75,7 +75,7 @@ public class FacultyDashboardController {
     private void handleEvents() { loadContent("user-events-view.fxml"); }
 
     @FXML
-    private void handleProfileView() {
+    private void handleProfile() {
         loadContent("faculty-profile-view.fxml");
     }
 

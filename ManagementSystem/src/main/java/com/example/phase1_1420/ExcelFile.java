@@ -17,7 +17,7 @@ public class ExcelFile {
     public List<Course> courseList = new ArrayList<>();
 
     // Common file path for all Excel operations
-    private static final String EXCEL_FILE_PATH = "ManagementSystem/src/main/resources/UMS_Data.xlsx";
+    private static final String EXCEL_FILE_PATH = "UMS_Data.xlsx";
 
     //Write the subject's back to the excel file after edit in GUI
     public void writeSubjectsToExcel(List<Subject> updatedSubjects) throws IOException {
@@ -25,6 +25,7 @@ public class ExcelFile {
         if (!file.exists()) {
             throw new IOException("Excel file not found at: " + file.getAbsolutePath());
         }
+
         FileInputStream fis = new FileInputStream(file);
         Workbook wb = WorkbookFactory.create(fis);
         Sheet sheet = wb.getSheetAt(0); // Subjects in sheet 0
@@ -294,23 +295,8 @@ public class ExcelFile {
             Cell passCell = row.getCell(11, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
             if (idCell != null) {
-                System.out.println("\nReading student from Excel:");
-                System.out.println("- ID: " + idCell.toString());
-                System.out.println("- Name: " + userCell.toString());
-                System.out.println("- Raw Subjects Cell: '" + (subjectsCell != null ? subjectsCell.toString() : "null") + "'");
-                
-                double progress = 0.0;
-                try {
-                    if (progressCell != null) {
-                        progress = Double.parseDouble(progressCell.toString());
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Warning: Invalid progress value for student " + idCell.toString() + ". Setting to 0.");
-                    progress = 0.0;
-                }
-                
                 Student student = new Student(idCell.toString(), passCell.toString(), userCell.toString(), emailCell.toString(), adressCell.toString(),
-                        telephoneCell.toString(), academicLevelCell.toString(),semesterCell.toString(), subjectsCell.toString(), thesisTitleCell.toString(), progress, thesisTitleCell.toString());
+                        telephoneCell.toString(), academicLevelCell.toString(),semesterCell.toString(), subjectsCell.toString(), thesisTitleCell.toString(), Double.parseDouble(progressCell.toString()), thesisTitleCell.toString());
                 studentList.add(student);
                 
                 System.out.println("- Processed Subjects: '" + student.getSubjects() + "'");
@@ -343,8 +329,7 @@ public class ExcelFile {
                         degreeCell != null ? degreeCell.toString() : "",
                         researchCell != null ? researchCell.toString() : "",
                         officeCell != null ? officeCell.toString() : "",
-                        coursesCell != null ? coursesCell.toString() : "",
-                        "" // 🔹 Missing department — using empty string here
+                        coursesCell != null ? coursesCell.toString() : ""
                 );
                 facultyList.add(faculty);
             }
@@ -403,7 +388,6 @@ public class ExcelFile {
         // Finding Courses In sheet 1
         sheet = wb.getSheetAt(1);
         courseList.clear();
-        System.out.println("Reading courses from Excel...");
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row == null) continue;
@@ -419,13 +403,11 @@ public class ExcelFile {
             Cell teacherCell = row.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
             if (courseCodecell != null) {
-                System.out.println("Found course: " + courseNameCell.toString() + " with subject code: " + subjectCodeCell.toString());
                 Course course = new Course(courseCodecell.toString(), courseNameCell.toString(), subjectCodeCell.toString(), sectionNumberCell.toString(), Double.parseDouble(CapacityCell.toString()),
                         lectureTimeCell.toString(), finalTimeCell.toString(), locationCell.toString(), teacherCell.toString());
                 courseList.add(course);
             }
         }
-        System.out.println("Total courses read from Excel: " + courseList.size());
 
         wb.close();
         fis.close();

@@ -73,91 +73,22 @@ public class CourseManagementController {
         String username = UserDatabase.CurrentUser.getUsername();
         String id = UserDatabase.CurrentUser.getId();
         ObservableList<Course> userCourses = FXCollections.observableArrayList();
-        
-        // Reload courses from Excel to ensure we have the latest data
-        try {
-            excelReader.ReadingNameExcelFile();
-            allCourses.setAll(excelReader.courseList);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
 
-        // Get the student's subjects
-        Student currentStudent = null;
-        for (Student student : excelReader.studentList) {
-            if (student.getId().equals(id)) {
-                currentStudent = student;
-                break;
-            }
-        }
-
-        if (currentStudent == null) {
-            courseTable.setItems(userCourses);
-            return;
-        }
-
-        String studentSubjectsStr = currentStudent.getSubjects();
-        if (studentSubjectsStr == null || studentSubjectsStr.trim().isEmpty()) {
-            courseTable.setItems(userCourses);
-            return;
-        }
-
-        // Split and clean subjects
-        String[] studentSubjects = studentSubjectsStr.split(",");
-        for (int i = 0; i < studentSubjects.length; i++) {
-            studentSubjects[i] = studentSubjects[i].trim().toUpperCase();
-        }
-
-        // Create a set to track processed subjects
-        java.util.Set<String> processedSubjects = new java.util.HashSet<>();
-
-        // First pass: Match existing courses
-        for (Course course : excelReader.courseList) {  // Use excelReader.courseList directly
-            String courseSubjectCode = course.getCode().trim().toUpperCase();
-            
-            // Check if this course belongs to the faculty
+        for (Course course : allCourses) {
             if (course.getTeacherName().equals(username)) {
                 userCourses.add(course);
-                processedSubjects.add(courseSubjectCode);
                 continue;
             }
-
-            // Check if this course matches any of the student's subjects
-            for (String studentSubject : studentSubjects) {
-                if (studentSubject.isEmpty()) continue;
-                
-                if (courseSubjectCode.equals(studentSubject)) {
-                    if (!processedSubjects.contains(courseSubjectCode)) {
+            for (Student student : excelReader.studentList) {
+                if (student.getId().equals(id)) {
+                    String[] enrolledCourseCodes = student.getSubjects().split(",");
+                    if (Arrays.asList(enrolledCourseCodes).contains(course.getCode())) {
                         userCourses.add(course);
-                        processedSubjects.add(courseSubjectCode);
                         break;
                     }
                 }
             }
         }
-
-        // Second pass: Add basic entries for subjects without corresponding courses
-        for (String studentSubject : studentSubjects) {
-            if (studentSubject.trim().isEmpty()) continue;
-            
-            if (!processedSubjects.contains(studentSubject)) {
-                Course basicCourse = new Course(
-                    studentSubject,  // Use subject code as course code
-                    "N/A",          // No course name available
-                    studentSubject, // Use subject code
-                    "N/A",         // No section number
-                    0.0,           // Default capacity
-                    "N/A",         // No lecture time
-                    "N/A",         // No final exam time
-                    "N/A",         // No location
-                    "N/A"          // No instructor
-                );
-                userCourses.add(basicCourse);
-                processedSubjects.add(studentSubject);
-            }
-        }
-
         courseTable.setItems(userCourses);
     }
 
