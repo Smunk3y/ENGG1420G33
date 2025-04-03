@@ -141,9 +141,12 @@ public class UserDashboardController implements Initializable {
 
     @FXML
     private void handleProfile() { loadContent("user-profile-view.fxml"); }
-    
+
     @FXML
-    private void handleFaculty() { loadContent("faculty-view.fxml");}
+    private void handleFaculty() {
+        loadContent("faculty-management-view.fxml");
+    }
+
 
     @FXML
     private void handleLogout() {
