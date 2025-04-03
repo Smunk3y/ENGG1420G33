@@ -76,7 +76,7 @@ public class FacultyDashboardController {
 
     @FXML
     private void handleProfile() {
-        loadContent("faculty-profile-view.fxml");
+        loadContent("facultyProfile.fxml");
     }
 
 
